@@ -1,70 +1,70 @@
+allprojects {
+    group "org.hexworks.microcline"
+    version "2018.1.0-PREVIEW"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "4.8"
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
 buildscript {
-    ext {
-        kotlinVersion = '1.1.4-3'
-        slf4jVersion = '1.7.24'
-
-        zirconVersion = '2017.2.1'
-
-        junitVersion = '4.12'
-        mockitoVersion = '1.10.19'
-        assertjVersion = '3.6.2'
-    }
+    ext.kotlinVersion = "1.2.60"
     repositories {
-        mavenCentral()
         mavenLocal()
+        jcenter()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath "com.eriwen:gradle-js-plugin:2.14.1"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
+}
+
+ext {
+    zirconVersion = "2018.3.0-PREVIEW"
+    junitVersion = "4.12"
+    mockitoVersion = "1.10.19"
+    assertjVersion = "3.6.2"
+    slf4jVersion = "1.7.25"
+
+    libraries = [
+            kotlin_stdlib : "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
+            kotlin_reflect: "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
+            slf4j_api     : "org.slf4j:slf4j-api:$slf4jVersion",
+            slf4j_simple  : "org.slf4j:slf4j-simple:$slf4jVersion",
+            zircon_core   : "com.github.hexworks.zircon:zircon.core:$zirconVersion",
+            zircon_jvm    : "com.github.hexworks.zircon:zircon.jvm:$zirconVersion",
+            zircon_swing  : "com.github.hexworks.zircon:zircon.jvm.swing:$zirconVersion",
+            junit         : "junit:junit:$junitVersion",
+            mockito       : "org.mockito:mockito-all:$mockitoVersion",
+            assertj       : "org.assertj:assertj-core:$assertjVersion"
+    ]
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 apply plugin: 'kotlin'
-apply plugin: 'jacoco'
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-jar {
-    baseName = 'microcline'
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'org.codetome.microcline.MainKt'
-    }
-
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-}
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    compile libraries.kotlin_stdlib
+    compile libraries.kotlin_reflect
 
-    compile("org.slf4j:slf4j-api:$slf4jVersion")
-    compile("org.slf4j:slf4j-simple:$slf4jVersion")
+    compile libraries.slf4j_api
+    compile libraries.slf4j_simple
 
-    compile("org.codetome.zircon:zircon:$zirconVersion")
+    compile libraries.zircon_core
+    compile libraries.zircon_jvm
+    compile libraries.zircon_swing
 
-    testCompile("junit:junit:$junitVersion")
-    testCompile("org.mockito:mockito-all:$mockitoVersion")
-    testCompile("org.assertj:assertj-core:$assertjVersion")
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        xml.destination "${buildDir}/reports/jacoco/report.xml"
-        html.enabled false
-        csv.enabled false
-    }
-}
-
-check.dependsOn jacocoTestReport
-
-test {
-    testLogging {
-        events "failed"
-        exceptionFormat "full"
-    }
+    testCompile libraries.junit
+    testCompile libraries.mockito
+    testCompile libraries.assertj
 }
