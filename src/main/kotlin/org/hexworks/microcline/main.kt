@@ -1,7 +1,7 @@
 package org.hexworks.microcline
 
 import org.hexworks.microcline.view.View
-import org.hexworks.microcline.view.WelcomeView
+import org.hexworks.microcline.view.DrawView
 import org.hexworks.zircon.api.AppConfigs
 import org.hexworks.zircon.api.CP437TilesetResources
 import org.hexworks.zircon.api.SwingApplications
@@ -10,7 +10,7 @@ import java.awt.Toolkit
 
 fun main(args: Array<String>) {
 
-    val tileSize = 16
+    val tileSize = 12
     val screenSize = Toolkit.getDefaultToolkit().screenSize
 
     val windowWidth = screenSize.width.div(tileSize).times(0.95).toInt()
@@ -18,12 +18,12 @@ fun main(args: Array<String>) {
 
     val grid = SwingApplications.startTileGrid(AppConfigs.newConfig()
             .defaultSize(Size.create(windowWidth, windowHeight))
-            .defaultTileset(CP437TilesetResources.wanderlust16x16())
-            .debugMode(true)
+            .defaultTileset(CP437TilesetResources.rexPaint12x12())
+            .debugMode(false)
             .build())
 
 
-    var currentView: View = WelcomeView(grid)
+    var currentView: View = DrawView(grid)
 
     grid.onInput { input ->
         currentView = currentView.respondToUserInput(input)
