@@ -35,7 +35,7 @@ class DrawView(tileGrid: TileGrid) : View {
 
         glyphPanel.onMouseReleased(object : Consumer<MouseAction> {
             override fun accept(t: MouseAction) {
-                glyphPanel.getTileAt(t.position.minus(Positions.offset1x1())).map { tile ->
+                glyphPanel.getTileAt(t.position).map { tile ->
                     tile.asCharacterTile().map { ct ->
                         println("position: ${t.position}, tile: $ct")
                         selectedGlyph = selectedGlyph.withCharacter(ct.character)
@@ -104,16 +104,16 @@ class DrawView(tileGrid: TileGrid) : View {
                 drawPanel.draw(
                         drawable = selectedGlyph,
                         position = t.position.minus(drawPanel.position()))
-                println("drawn: $selectedGlyph")
             }
         })
 
-
-        screen.addComponent(glyphPanel)
-        screen.addComponent(palettePanel)
-        screen.addComponent(toolsPanel)
-        screen.addComponent(layersPanel)
-        screen.addComponent(drawPanel)
+        listOf(glyphPanel, palettePanel, toolsPanel, layersPanel, drawPanel).forEach {
+            screen.addComponent(it)
+        }
+        screen.applyColorTheme(THEME)
+        drawPanel.getEffectiveSize().fetchPositions().forEach {
+            drawPanel.setRelativeTileAt(it, Tiles.defaultTile())
+        }
     }
 
     override fun display() {
@@ -122,5 +122,9 @@ class DrawView(tileGrid: TileGrid) : View {
 
     override fun respondToUserInput(input: Input): View {
         return this
+    }
+
+    companion object {
+        val THEME = ColorThemes.monokaiBlue()
     }
 }
