@@ -11,6 +11,7 @@ import org.hexworks.zircon.internal.util.CP437Utils
 class DrawView(private val tileGrid: TileGrid) : View {
 
     private val screen = Screens.createScreenFor(tileGrid)
+    private val config = DrawConfig()
 
     init {
         // ----- Glyphs
@@ -32,7 +33,8 @@ class DrawView(private val tileGrid: TileGrid) : View {
         }
 
         glyphPanel.onMouseReleased(object: Consumer<MouseAction> { override fun accept(t: MouseAction) {
-            println(t)
+            println("position: ${t.position}, set glyph: ${tileGrid.getTileAt(t.position).get()}")
+            config.setGlyph(tileGrid.getTileAt(t.position).get())
         } })
 
         // ----- Palette
@@ -90,6 +92,14 @@ class DrawView(private val tileGrid: TileGrid) : View {
                 .size(Sizes.create(tileGrid.size().width().minus(20), tileGrid.size().height().minus(2)))
                 .position(Positions.defaultPosition().relativeToRightOf(glyphPanel))
                 .build()
+        drawPanel.onMousePressed(object: Consumer<MouseAction> { override fun accept(t: MouseAction) {
+            drawPanel.draw(
+                    Tiles.newBuilder().character('#').build(),
+//                    config.getGlyph(),
+                    t.position.minus(drawPanel.position())
+            )
+            println("draw: ${config.getGlyph()}")
+        } })
 
 
         screen.addComponent(glyphPanel)
