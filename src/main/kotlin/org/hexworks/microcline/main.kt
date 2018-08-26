@@ -1,12 +1,12 @@
 package org.hexworks.microcline
 
-import org.hexworks.microcline.view.View
 import org.hexworks.microcline.view.DrawView
+import org.hexworks.microcline.view.View
 import org.hexworks.zircon.api.AppConfigs
 import org.hexworks.zircon.api.CP437TilesetResources
-import org.hexworks.zircon.api.SwingApplications
 import org.hexworks.zircon.api.data.Size
 import java.awt.Toolkit
+import org.hexworks.zircon.api.SwingApplications
 
 fun main(args: Array<String>) {
 
@@ -19,15 +19,17 @@ fun main(args: Array<String>) {
     val grid = SwingApplications.startTileGrid(AppConfigs.newConfig()
             .defaultSize(Size.create(windowWidth, windowHeight))
             .defaultTileset(CP437TilesetResources.rexPaint12x12())
-            .debugMode(false)
             .build())
 
 
     var currentView: View = DrawView(grid)
 
     grid.onInput { input ->
+        val oldView = currentView
         currentView = currentView.respondToUserInput(input)
-        currentView.display()
+        if (oldView !== currentView) {
+            currentView.display()
+        }
     }
 
     currentView.display()

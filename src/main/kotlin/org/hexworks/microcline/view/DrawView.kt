@@ -2,16 +2,17 @@ package org.hexworks.microcline.view
 
 import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.color.ANSITileColor
+import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.Input
 import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.util.Consumer
 import org.hexworks.zircon.internal.util.CP437Utils
 
-class DrawView(private val tileGrid: TileGrid) : View {
+class DrawView(tileGrid: TileGrid) : View {
 
     private val screen = Screens.createScreenFor(tileGrid)
-    private val config = DrawConfig()
+    private var selectedGlyph: CharacterTile = Tiles.defaultTile()
 
     init {
         // ----- Glyphs
@@ -32,10 +33,16 @@ class DrawView(private val tileGrid: TileGrid) : View {
             )
         }
 
-        glyphPanel.onMouseReleased(object: Consumer<MouseAction> { override fun accept(t: MouseAction) {
-            println("position: ${t.position}, set glyph: ${tileGrid.getTileAt(t.position).get()}")
-            config.setGlyph(tileGrid.getTileAt(t.position).get())
-        } })
+        glyphPanel.onMouseReleased(object : Consumer<MouseAction> {
+            override fun accept(t: MouseAction) {
+                glyphPanel.getTileAt(t.position.minus(Positions.offset1x1())).map { tile ->
+                    tile.asCharacterTile().map { ct ->
+                        println("position: ${t.position}, tile: $ct")
+                        selectedGlyph = selectedGlyph.withCharacter(ct.character)
+                    }
+                }
+            }
+        })
 
         // ----- Palette
         val palettePanel = Components.panel()
@@ -92,14 +99,14 @@ class DrawView(private val tileGrid: TileGrid) : View {
                 .size(Sizes.create(tileGrid.size().width().minus(20), tileGrid.size().height().minus(2)))
                 .position(Positions.defaultPosition().relativeToRightOf(glyphPanel))
                 .build()
-        drawPanel.onMousePressed(object: Consumer<MouseAction> { override fun accept(t: MouseAction) {
-            drawPanel.draw(
-                    Tiles.newBuilder().character('#').build(),
-//                    config.getGlyph(),
-                    t.position.minus(drawPanel.position())
-            )
-            println("draw: ${config.getGlyph()}")
-        } })
+        drawPanel.onMousePressed(object : Consumer<MouseAction> {
+            override fun accept(t: MouseAction) {
+                drawPanel.draw(
+                        drawable = selectedGlyph,
+                        position = t.position.minus(drawPanel.position()))
+                println("drawn: $selectedGlyph")
+            }
+        })
 
 
         screen.addComponent(glyphPanel)
@@ -114,11 +121,6 @@ class DrawView(private val tileGrid: TileGrid) : View {
     }
 
     override fun respondToUserInput(input: Input): View {
-//        return when (input.getInputType()) {
-//            Enter -> WinView(tileGrid)
-//            Escape -> LoseView(tileGrid)
-//            else -> this
-//        }
         return this
     }
 }
