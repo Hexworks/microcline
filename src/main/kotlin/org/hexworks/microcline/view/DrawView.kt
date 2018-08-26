@@ -4,6 +4,8 @@ import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.Input
+import org.hexworks.zircon.api.input.MouseAction
+import org.hexworks.zircon.api.util.Consumer
 import org.hexworks.zircon.internal.util.CP437Utils
 
 class DrawView(private val tileGrid: TileGrid) : View {
@@ -28,6 +30,10 @@ class DrawView(private val tileGrid: TileGrid) : View {
                     Positions.create(it % 16, it / 16).plus(Positions.offset1x1())
             )
         }
+
+        glyphPanel.onMouseReleased(object: Consumer<MouseAction> { override fun accept(t: MouseAction) {
+            println(t)
+        } })
 
         // ----- Palette
         val palettePanel = Components.panel()
