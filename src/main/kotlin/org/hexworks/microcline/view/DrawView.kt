@@ -35,7 +35,7 @@ class DrawView(tileGrid: TileGrid) : View {
 
         glyphPanel.onMouseReleased(object : Consumer<MouseAction> {
             override fun accept(t: MouseAction) {
-                glyphPanel.getTileAt(t.position).map { tile ->
+                glyphPanel.getTileAt(t.position.plus(Positions.offset1x1())).map { tile ->
                     tile.asCharacterTile().map { ct ->
                         println("position: ${t.position}, tile: $ct")
                         selectedGlyph = selectedGlyph.withCharacter(ct.character)
