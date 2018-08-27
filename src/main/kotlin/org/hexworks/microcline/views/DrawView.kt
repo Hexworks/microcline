@@ -1,5 +1,6 @@
-package org.hexworks.microcline.view
+package org.hexworks.microcline.views
 
+import org.hexworks.microcline.panels.GlyphPanel
 import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.data.CharacterTile
@@ -9,47 +10,24 @@ import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.util.Consumer
 import org.hexworks.zircon.internal.util.CP437Utils
 
+// TODO: add these to zircon
+const val MB_LEFT = 1
+const val MB_CENTER = 2
+const val MB_RIGHT = 3
+
 class DrawView(tileGrid: TileGrid) : View {
 
     private val screen = Screens.createScreenFor(tileGrid)
-    private var selectedGlyph: CharacterTile = Tiles.defaultTile()
 
     init {
-        // ----- Glyphs
-        val glyphPanel = Components.panel()
-                .wrapWithBox()
-                .title("Glyph")
-                .size(Sizes.create(18, 18))
-                .position(Positions.offset1x1())
-                .build()
-
-        (0..255).forEach {
-            glyphPanel.draw(
-                    Tiles.newBuilder()
-                            .foregroundColor(ANSITileColor.WHITE)
-                            .character(CP437Utils.convertCp437toUnicode(it))
-                            .build(),
-                    Positions.create(it % 16, it / 16).plus(Positions.offset1x1())
-            )
-        }
-
-        glyphPanel.onMouseReleased(object : Consumer<MouseAction> {
-            override fun accept(t: MouseAction) {
-                glyphPanel.getTileAt(t.position.plus(Positions.offset1x1())).map { tile ->
-                    tile.asCharacterTile().map { ct ->
-                        println("position: ${t.position}, tile: $ct")
-                        selectedGlyph = selectedGlyph.withCharacter(ct.character)
-                    }
-                }
-            }
-        })
+        val newGlyphPanel = GlyphPanel(Positions.offset1x1())
 
         // ----- Palette
         val palettePanel = Components.panel()
                 .wrapWithBox()
                 .title("Palette")
                 .size(Sizes.create(18, 18))
-                .position(Positions.defaultPosition().relativeToBottomOf(glyphPanel))
+                .position(Positions.defaultPosition().relativeToBottomOf(newGlyphPanel.getPanel()))
                 .build()
 
         Palette.forEachIndexed { index, tileColor ->
@@ -97,23 +75,22 @@ class DrawView(tileGrid: TileGrid) : View {
                 .wrapWithBox()
                 .title("Draw surface: $fileName")
                 .size(Sizes.create(tileGrid.size().width().minus(20), tileGrid.size().height().minus(2)))
-                .position(Positions.defaultPosition().relativeToRightOf(glyphPanel))
+                .position(Positions.defaultPosition().relativeToRightOf(newGlyphPanel.getPanel()))
                 .build()
         drawPanel.onMousePressed(object : Consumer<MouseAction> {
-            override fun accept(t: MouseAction) {
+            override fun accept(p: MouseAction) {
                 drawPanel.draw(
-                        drawable = selectedGlyph,
-                        position = t.position.minus(drawPanel.position()))
+                        drawable = newGlyphPanel.getGlyph(),
+                        position = p.position.minus(drawPanel.position()))
             }
         })
 
-        listOf(glyphPanel, palettePanel, toolsPanel, layersPanel, drawPanel).forEach {
-            screen.addComponent(it)
-        }
-        screen.applyColorTheme(THEME)
-        drawPanel.getEffectiveSize().fetchPositions().forEach {
-            drawPanel.setRelativeTileAt(it, Tiles.defaultTile())
-        }
+
+        screen.addComponent(newGlyphPanel.getPanel())
+        screen.addComponent(palettePanel)
+        screen.addComponent(toolsPanel)
+        screen.addComponent(layersPanel)
+        screen.addComponent(drawPanel)
     }
 
     override fun display() {

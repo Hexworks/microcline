@@ -1,7 +1,7 @@
 package org.hexworks.microcline
 
-import org.hexworks.microcline.view.DrawView
-import org.hexworks.microcline.view.View
+import org.hexworks.microcline.views.DrawView
+import org.hexworks.microcline.views.View
 import org.hexworks.zircon.api.AppConfigs
 import org.hexworks.zircon.api.CP437TilesetResources
 import org.hexworks.zircon.api.data.Size

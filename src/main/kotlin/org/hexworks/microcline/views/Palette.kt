@@ -1,4 +1,4 @@
-package org.hexworks.microcline.view
+package org.hexworks.microcline.views
 
 import org.hexworks.zircon.api.color.TileColor
 
