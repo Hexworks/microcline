@@ -1,6 +1,5 @@
 package org.hexworks.microcline.panels
 
-import org.hexworks.microcline.views.MB_LEFT
 import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.component.Panel
@@ -29,7 +28,7 @@ class GlyphPanel(
         this.onMouseReleased(object : Consumer<MouseAction> {
             override fun accept(p: MouseAction) {
                 // Only the left mouse button can be used
-                if (p.button != MB_LEFT) {
+                if (p.button != MouseButton.LEFT) {
                     return
                 }
                 // Ignore if clicked on the border
@@ -42,6 +41,7 @@ class GlyphPanel(
             }
         })
 
+        // TODO: this should be (1, 1) relative to the panel
         select(Positions.create(2, 2))
     }
 

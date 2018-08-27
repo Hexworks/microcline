@@ -10,10 +10,6 @@ import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.util.Consumer
 import org.hexworks.zircon.internal.util.CP437Utils
 
-// TODO: add these to zircon
-const val MB_LEFT = 1
-const val MB_CENTER = 2
-const val MB_RIGHT = 3
 
 class DrawView(tileGrid: TileGrid) : View {
 
