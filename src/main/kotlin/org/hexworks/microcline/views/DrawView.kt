@@ -57,7 +57,10 @@ class DrawView(tileGrid: TileGrid) : View {
         drawPanel.onMousePressed(object : Consumer<MouseAction> {
             override fun accept(p: MouseAction) {
                 drawPanel.draw(
-                        drawable = glyphPanel.getGlyph(),
+                        drawable = Tiles.newBuilder()
+                                .character(glyphPanel.getGlyph().character)
+                                .backgroundColor(palettePanel.getBackgroundColor())
+                                .foregroundColor(palettePanel.getForegroundColor()).build(),
                         position = p.position.minus(drawPanel.position()))
             }
         })
