@@ -1,5 +1,6 @@
 package org.hexworks.microcline.panels
 
+import org.hexworks.microcline.common.MouseButton
 import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.component.Panel
@@ -9,15 +10,15 @@ import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.util.Consumer
 import org.hexworks.zircon.internal.util.CP437Utils
 
-const val SIZE_X = 16
-const val SIZE_Y = 16
+const val GLYPH_P_SIZE_X = 16
+const val GLYPH_P_SIZE_Y = 16
 
 class GlyphPanel(
         position: Position,
         private val panel: Panel = Components.panel()
                 .wrapWithBox()
                 .title("Glyph")
-                .size(Sizes.create(SIZE_X, SIZE_Y).plus(Sizes.create(2, 2)))
+                .size(Sizes.create(GLYPH_P_SIZE_X, GLYPH_P_SIZE_Y).plus(Sizes.create(2, 2)))
                 .position(position)
                 .build()
 ): Panel by panel {
@@ -33,8 +34,8 @@ class GlyphPanel(
                 }
                 // Ignore if clicked on the border
                 // TODO: must be a better way... possible zircon feature?
-                if ((p.position.x <= position.x) || (p.position.x > position.x + SIZE_X) ||
-                        (p.position.y <= position.y) || (p.position.y > position.y + SIZE_Y)) {
+                if ((p.position.x <= position.x) || (p.position.x > position.x + GLYPH_P_SIZE_X) ||
+                        (p.position.y <= position.y) || (p.position.y > position.y + GLYPH_P_SIZE_Y)) {
                     return
                 }
                 select(p.position)
@@ -57,7 +58,7 @@ class GlyphPanel(
                             .backgroundColor(ANSITileColor.BLACK)
                             .character(CP437Utils.convertCp437toUnicode(it))
                             .build(),
-                    Positions.create(it % SIZE_X, it / SIZE_Y).plus(Positions.offset1x1())
+                    Positions.create(it % GLYPH_P_SIZE_X, it / GLYPH_P_SIZE_Y).plus(Positions.offset1x1())
             )
         }
         glyph = this.getRelativeTileAt(position.minus(Positions.offset1x1())).get().asCharacterTile().get()

@@ -1,4 +1,4 @@
-package org.hexworks.microcline.panels
+package org.hexworks.microcline.common
 
 // TODO: add this to zircon
 

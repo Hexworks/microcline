@@ -1,14 +1,12 @@
 package org.hexworks.microcline.views
 
 import org.hexworks.microcline.panels.GlyphPanel
+import org.hexworks.microcline.panels.PalettePanel
 import org.hexworks.zircon.api.*
-import org.hexworks.zircon.api.color.ANSITileColor
-import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.Input
 import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.util.Consumer
-import org.hexworks.zircon.internal.util.CP437Utils
 
 
 class DrawView(tileGrid: TileGrid) : View {
@@ -16,32 +14,15 @@ class DrawView(tileGrid: TileGrid) : View {
     private val screen = Screens.createScreenFor(tileGrid)
 
     init {
-        val newGlyphPanel = GlyphPanel(Positions.offset1x1())
-
-        // ----- Palette
-        val palettePanel = Components.panel()
-                .wrapWithBox()
-                .title("Palette")
-                .size(Sizes.create(18, 18))
-                .position(Positions.defaultPosition().relativeToBottomOf(newGlyphPanel.getPanel()))
-                .build()
-
-        Palette.forEachIndexed { index, tileColor ->
-            palettePanel.draw(
-                    Tiles.newBuilder()
-                            .backgroundColor(tileColor)
-                            .character(' ')
-                            .build(),
-                    Positions.create(index % 16, index / 16).plus(Positions.offset1x1())
-            )
-        }
+        val glyphPanel = GlyphPanel(Positions.offset1x1())
+        val palettePanel = PalettePanel(Positions.relativeToBottomOf(glyphPanel.getPanel()))
 
         // ----- Tools
         val toolsPanel = Components.panel()
                 .wrapWithBox()
                 .title("Tools")
                 .size(Sizes.create(18, 9))
-                .position(Positions.defaultPosition().relativeToBottomOf(palettePanel))
+                .position(Positions.defaultPosition().relativeToBottomOf(palettePanel.getPanel()))
                 .build()
 
         val toolOptions = Components.radioButtonGroup()
@@ -71,19 +52,19 @@ class DrawView(tileGrid: TileGrid) : View {
                 .wrapWithBox()
                 .title("Draw surface: $fileName")
                 .size(Sizes.create(tileGrid.size().width().minus(20), tileGrid.size().height().minus(2)))
-                .position(Positions.defaultPosition().relativeToRightOf(newGlyphPanel.getPanel()))
+                .position(Positions.defaultPosition().relativeToRightOf(glyphPanel.getPanel()))
                 .build()
         drawPanel.onMousePressed(object : Consumer<MouseAction> {
             override fun accept(p: MouseAction) {
                 drawPanel.draw(
-                        drawable = newGlyphPanel.getGlyph(),
+                        drawable = glyphPanel.getGlyph(),
                         position = p.position.minus(drawPanel.position()))
             }
         })
 
 
-        screen.addComponent(newGlyphPanel.getPanel())
-        screen.addComponent(palettePanel)
+        screen.addComponent(glyphPanel.getPanel())
+        screen.addComponent(palettePanel.getPanel())
         screen.addComponent(toolsPanel)
         screen.addComponent(layersPanel)
         screen.addComponent(drawPanel)
@@ -95,9 +76,5 @@ class DrawView(tileGrid: TileGrid) : View {
 
     override fun respondToUserInput(input: Input): View {
         return this
-    }
-
-    companion object {
-        val THEME = ColorThemes.monokaiBlue()
     }
 }
