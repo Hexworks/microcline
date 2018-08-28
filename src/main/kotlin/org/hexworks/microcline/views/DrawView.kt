@@ -1,12 +1,11 @@
 package org.hexworks.microcline.views
 
+import org.hexworks.microcline.panels.DrawPanel
 import org.hexworks.microcline.panels.GlyphPanel
 import org.hexworks.microcline.panels.PalettePanel
 import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.Input
-import org.hexworks.zircon.api.input.MouseAction
-import org.hexworks.zircon.api.util.Consumer
 
 
 class DrawView(tileGrid: TileGrid) : View {
@@ -47,30 +46,18 @@ class DrawView(tileGrid: TileGrid) : View {
                 .build()
 
         // ----- Draw surface
-        val fileName = "<Untitled>"
-        val drawPanel = Components.panel()
-                .wrapWithBox()
-                .title("Draw surface: $fileName")
-                .size(Sizes.create(tileGrid.size().width().minus(20), tileGrid.size().height().minus(2)))
-                .position(Positions.defaultPosition().relativeToRightOf(glyphPanel.getPanel()))
-                .build()
-        drawPanel.onMousePressed(object : Consumer<MouseAction> {
-            override fun accept(p: MouseAction) {
-                drawPanel.draw(
-                        drawable = Tiles.newBuilder()
-                                .character(glyphPanel.getGlyph().character)
-                                .backgroundColor(palettePanel.getBackgroundColor())
-                                .foregroundColor(palettePanel.getForegroundColor()).build(),
-                        position = p.position.minus(drawPanel.position()))
-            }
-        })
-
+        val drawPanel = DrawPanel(
+                Positions.relativeToRightOf(glyphPanel.getPanel()),
+                Sizes.create(tileGrid.size().width().minus(20), tileGrid.size().height().minus(2)),
+                glyphPanel,
+                palettePanel
+        )
 
         screen.addComponent(glyphPanel.getPanel())
         screen.addComponent(palettePanel.getPanel())
         screen.addComponent(toolsPanel)
         screen.addComponent(layersPanel)
-        screen.addComponent(drawPanel)
+        screen.addComponent(drawPanel.getPanel())
     }
 
     override fun display() {
