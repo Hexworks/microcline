@@ -17,7 +17,7 @@ buildscript {
 }
 
 ext {
-    zirconVersion = "2018.3.21-PREVIEW"
+    zirconVersion = "2018.3.24-PREVIEW"
     junitVersion = "4.12"
     mockitoVersion = "1.10.19"
     assertjVersion = "3.6.2"

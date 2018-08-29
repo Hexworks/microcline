@@ -21,6 +21,8 @@ class DrawPanel(
                 .build()
 ): Panel by panel {
 
+    private var active = false
+
     init {
         this.onMousePressed(object : Consumer<MouseAction> {
             override fun accept(p: MouseAction) {
@@ -30,8 +32,30 @@ class DrawPanel(
                                 .backgroundColor(palettePanel.getBackgroundColor())
                                 .foregroundColor(palettePanel.getForegroundColor()).build(),
                         position = p.position.minus(this@DrawPanel.position()))
+                this@DrawPanel.active = true
             }
         })
+
+        this.onMouseReleased(object : Consumer<MouseAction> {
+            override fun accept(p: MouseAction) {
+                this@DrawPanel.active = false
+            }
+        })
+
+        panel.onMouseMoved(object : Consumer<MouseAction> {
+            override fun accept(p: MouseAction) {
+                println("POS: ${p.position}, active: ${this@DrawPanel.active}")
+                if (this@DrawPanel.active) {
+                    this@DrawPanel.draw(
+                            drawable = Tiles.newBuilder()
+                                    .character(glyphPanel.getGlyph().character)
+                                    .backgroundColor(palettePanel.getBackgroundColor())
+                                    .foregroundColor(palettePanel.getForegroundColor()).build(),
+                            position = p.position.minus(this@DrawPanel.position()))
+                }
+            }
+        })
+
     }
 
     fun getPanel() = panel
