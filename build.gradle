@@ -4,7 +4,7 @@ allprojects {
 }
 
 buildscript {
-    ext.kotlinVersion = "1.2.60"
+    ext.kotlinVersion = "1.2.71"
     repositories {
         mavenLocal()
         jcenter()
@@ -17,7 +17,7 @@ buildscript {
 }
 
 ext {
-    zirconVersion = "2018.3.24-PREVIEW"
+    zirconVersion = "2018.3.29-PREVIEW"
     junitVersion = "4.12"
     mockitoVersion = "1.10.19"
     assertjVersion = "3.6.2"

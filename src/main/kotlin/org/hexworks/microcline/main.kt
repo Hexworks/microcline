@@ -7,6 +7,8 @@ import org.hexworks.zircon.api.CP437TilesetResources
 import org.hexworks.zircon.api.data.Size
 import java.awt.Toolkit
 import org.hexworks.zircon.api.SwingApplications
+import org.hexworks.zircon.api.kotlin.onInput
+
 
 fun main(args: Array<String>) {
 
