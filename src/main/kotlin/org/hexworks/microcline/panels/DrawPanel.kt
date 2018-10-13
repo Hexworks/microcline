@@ -4,6 +4,7 @@ import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Panel
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Size
+import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
 
 class DrawPanel(
@@ -11,9 +12,10 @@ class DrawPanel(
         size: Size,
         private val panel: Panel = Components.panel()
                 .wrapWithBox(true)
-                .title("Draw")
-                .size(size)
-                .position(position)
+                .withTitle("Draw")
+                .withSize(size)
+                .withPosition(position)
+                .withComponentRenderer(NoOpComponentRenderer())
                 .build()
 ): Panel by panel {
 

@@ -19,7 +19,7 @@ class GlyphController(
         }
 
         val mPos = action.position
-        val pos = glyphPanel.position()
+        val pos = glyphPanel.position
 
         // Ignore if clicked on the border
         // TODO: must be a better way... possible zircon feature?

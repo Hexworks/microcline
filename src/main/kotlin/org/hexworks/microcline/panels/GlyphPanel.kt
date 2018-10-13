@@ -8,6 +8,7 @@ import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.component.Panel
 import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 import org.hexworks.zircon.internal.util.CP437Utils
 
 const val GLYPH_P_SIZE_X = 16
@@ -18,9 +19,10 @@ class GlyphPanel(
         position: Position,
         private val panel: Panel = Components.panel()
                 .wrapWithBox(true)
-                .title("Glyph")
-                .size(Sizes.create(GLYPH_P_SIZE_X, GLYPH_P_SIZE_Y).plus(Sizes.create(2, 2)))
-                .position(position)
+                .withTitle("Glyph")
+                .withSize(Sizes.create(GLYPH_P_SIZE_X, GLYPH_P_SIZE_Y).plus(Sizes.create(2, 2)))
+                .withPosition(position)
+                .withComponentRenderer(NoOpComponentRenderer())
                 .build()
 ): Panel by panel {
 
@@ -39,15 +41,15 @@ class GlyphPanel(
         (0..255).forEach {
             this.draw(
                     Tiles.newBuilder()
-                            .foregroundColor(ANSITileColor.WHITE)
-                            .backgroundColor(ANSITileColor.BLACK)
-                            .character(CP437Utils.convertCp437toUnicode(it))
+                            .withForegroundColor(ANSITileColor.WHITE)
+                            .withBackgroundColor(ANSITileColor.BLACK)
+                            .withCharacter(CP437Utils.convertCp437toUnicode(it))
                             .build(),
                     Positions.create(it % GLYPH_P_SIZE_X, it / GLYPH_P_SIZE_Y).plus(Positions.offset1x1())
             )
         }
-        glyph = this.getRelativeTileAt(position.minus(Positions.offset1x1())).get().asCharacterTile().get()
-        this.setRelativeTileAt(
+        glyph = this.getTileAt(position.minus(Positions.offset1x1())).get().asCharacterTile().get()
+        this.setTileAt(
                 position.minus(Positions.offset1x1()),
                 glyph.withForegroundColor(ANSITileColor.RED).withBackgroundColor(ANSITileColor.CYAN)
         )

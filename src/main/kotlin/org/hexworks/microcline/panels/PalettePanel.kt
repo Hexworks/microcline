@@ -9,6 +9,7 @@ import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.color.TileColor
 import org.hexworks.zircon.api.component.Panel
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
 const val PALETTE_P_SIZE_X = 16
 const val PALETTE_P_SIZE_Y = 16
@@ -18,9 +19,10 @@ class PalettePanel(
         position: Position,
         private val panel: Panel = Components.panel()
                 .wrapWithBox(true)
-                .title("Palette")
-                .size(Sizes.create(PALETTE_P_SIZE_X, PALETTE_P_SIZE_Y).plus(Sizes.create(2, 2)))
-                .position(position)
+                .withTitle("Palette")
+                .withSize(Sizes.create(PALETTE_P_SIZE_X, PALETTE_P_SIZE_Y).plus(Sizes.create(2, 2)))
+                .withPosition(position)
+                .withComponentRenderer(NoOpComponentRenderer())
                 .build()
 ): Panel by panel {
 
@@ -40,10 +42,10 @@ class PalettePanel(
 
     fun select(position: Position, button: Int) {
         Palette.forEachIndexed { index, tileColor ->
-            this.draw(
+            panel.draw(
                     Tiles.newBuilder()
-                            .backgroundColor(tileColor)
-                            .character(' ')
+                            .withBackgroundColor(tileColor)
+                            .withCharacter(' ')
                             .build(),
                     Positions.create(index % PALETTE_P_SIZE_X, index / PALETTE_P_SIZE_Y).plus(Positions.offset1x1())
             )
@@ -57,30 +59,30 @@ class PalettePanel(
             }
         }
         if (backgroundColor == foregroundColor) {
-            this.draw(
+            panel.draw(
                     Tiles.newBuilder()
-                            .backgroundColor(color)
-                            .foregroundColor(color.invert())
-                            .character('#')
+                            .withBackgroundColor(color)
+                            .withForegroundColor(color.invert())
+                            .withCharacter('#')
                             .build(),
                     position
             )
         } else {
             val bgIndex = Palette.indexOf(backgroundColor)
             val fgIndex = Palette.indexOf(foregroundColor)
-            this.draw(
+            panel.draw(
                     Tiles.newBuilder()
-                            .backgroundColor(backgroundColor)
-                            .foregroundColor(backgroundColor.invert())
-                            .character('B')
+                            .withBackgroundColor(backgroundColor)
+                            .withForegroundColor(backgroundColor.invert())
+                            .withCharacter('B')
                             .build(),
                     Positions.create(bgIndex % PALETTE_P_SIZE_X, bgIndex / PALETTE_P_SIZE_Y).plus(Positions.offset1x1())
             )
-            this.draw(
+            panel.draw(
                     Tiles.newBuilder()
-                            .backgroundColor(foregroundColor)
-                            .foregroundColor(foregroundColor.invert())
-                            .character('F')
+                            .withBackgroundColor(foregroundColor)
+                            .withForegroundColor(foregroundColor.invert())
+                            .withCharacter('F')
                             .build(),
                     Positions.create(fgIndex % PALETTE_P_SIZE_X, fgIndex / PALETTE_P_SIZE_Y).plus(Positions.offset1x1())
             )
