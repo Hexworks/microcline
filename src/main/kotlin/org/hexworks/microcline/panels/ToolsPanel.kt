@@ -32,16 +32,8 @@ class ToolsPanel(
 
     init {
         // TODO: add select() to RadioButton(Group?) interface in Zircon, so we can get rid of the casting here
-        (listOf(
-                DrawMode.FREE,
-                DrawMode.LINE,
-                DrawMode.RECTANGLE,
-                DrawMode.OVAL,
-                DrawMode.FILL,
-                DrawMode.TEXT,
-                DrawMode.SELECT
-        ).map {
-            toolOptions.addOption(it, it.capitalize())
+        (enumValues<DrawMode>().asList().map {
+            toolOptions.addOption(it.toString(), it.label)
         }.first() as DefaultRadioButton).select()
 
         this.addComponent(toolOptions)

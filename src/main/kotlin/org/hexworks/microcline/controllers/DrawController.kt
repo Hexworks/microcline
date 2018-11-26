@@ -30,24 +30,26 @@ class DrawController(
     private lateinit var tempLayer: Layer
 
     override fun mousePressed(action: MouseAction) {
-        when (toolsPanel.selectedMode()) {
-            DrawMode.FREE -> drawTile(action)
-            else -> {
-                startPosition = action.position
-                tempLayer = LayerBuilder.newBuilder()
-                        .withSize(drawPanel.size)
-                        .withOffset(drawPanel.position)
-                        .build()
-                grid.pushLayer(tempLayer)
-            }
-        }
+        // We always create a temporary layer for drawing.
+        startPosition = action.position
+        tempLayer = LayerBuilder.newBuilder()
+                .withSize(drawPanel.size)
+                .withOffset(drawPanel.position)
+                .build()
+        grid.pushLayer(tempLayer)
     }
 
     override fun mouseReleased(action: MouseAction) {
         when (toolsPanel.selectedMode()) {
-            DrawMode.FREE -> {}
+            DrawMode.FREE.toString() -> {
+                if (startPosition == action.position) {
+                    drawTile(action, tempLayer)
+                }
+            }
             else -> {
-                println("save layer")
+                // TODO: this is where layer merging should happen when Zircon supports it.
+                // Below is a raw implementation which doesn't work.
+                println("merge layer")
 //                tempLayer.fetchPositions().map {
 //                    val t = tempLayer.getAbsoluteTileAt(it)
 //                    if (t.isPresent) {
@@ -62,8 +64,11 @@ class DrawController(
 
     override fun mouseDragged(action: MouseAction) {
         when (toolsPanel.selectedMode()) {
-            DrawMode.FREE -> drawTile(action)
-            DrawMode.LINE -> {
+            DrawMode.FREE.toString() -> {
+                drawLine(action, tempLayer)
+                startPosition = action.position
+            }
+            DrawMode.LINE.toString() -> {
                 // TODO: Zircon Layer should have a clear() method.
                 tempLayer.fetchPositions().map {
                     tempLayer.setAbsoluteTileAt(it, Tile.empty())
@@ -73,8 +78,8 @@ class DrawController(
         }
     }
 
-    private fun drawTile(action: MouseAction) {
-        drawPanel.draw(
+    private fun drawTile(action: MouseAction, surface: DrawSurface) {
+        surface.draw(
                 drawable = Tiles.newBuilder()
                         .withCharacter(glyphPanel.selectedGlyph().character)
                         .withBackgroundColor(palettePanel.selectedBackgroundColor())
