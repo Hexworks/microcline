@@ -18,12 +18,12 @@ class DrawView(tileGrid: TileGrid) : View {
     init {
         // Create the panels, top to bottom
         val glyphPanel = GlyphPanel(Positions.offset1x1())
-        val palettePanel = PalettePanel(Positions.relativeToBottomOf(glyphPanel.getPanel()))
-        val toolsPanel = ToolsPanel(Positions.relativeToBottomOf(palettePanel.getPanel()))
-        val layersPanel = LayersPanel(Positions.relativeToBottomOf(toolsPanel.getPanel()))
+        val palettePanel = PalettePanel(Positions.bottomLeftOf(glyphPanel.getPanel()))
+        val toolsPanel = ToolsPanel(Positions.bottomLeftOf(palettePanel.getPanel()))
+        val layersPanel = LayersPanel(Positions.bottomLeftOf(toolsPanel.getPanel()))
         val drawPanel = DrawPanel(
-                Positions.relativeToRightOf(glyphPanel.getPanel()),
-                Sizes.create(tileGrid.size().width().minus(20), tileGrid.size().height().minus(2))
+                Positions.topRightOf(glyphPanel.getPanel()),
+                Sizes.create(tileGrid.size.width.minus(20), tileGrid.size.height.minus(2))
         )
 
         // Create controllers and wire them up to panels
@@ -33,7 +33,7 @@ class DrawView(tileGrid: TileGrid) : View {
         val paletteController = PaletteController(palettePanel)
         palettePanel.onMouseAction(paletteController)
 
-        val drawController = DrawController(drawPanel, glyphPanel, palettePanel)
+        val drawController = DrawController(tileGrid, drawPanel, glyphPanel, palettePanel, toolsPanel)
         drawPanel.onMouseAction(drawController)
 
         // Add panels to screen

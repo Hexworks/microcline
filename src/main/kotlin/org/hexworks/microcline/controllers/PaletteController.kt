@@ -19,7 +19,7 @@ class PaletteController(
         }
 
         val mPos = action.position
-        val pos = palettePanel.position()
+        val pos = palettePanel.position
 
         // Ignore if clicked on the border
         // TODO: must be a better way... possible zircon feature?

@@ -19,8 +19,8 @@ fun main(args: Array<String>) {
     val windowHeight = screenSize.height.div(tileSize).times(0.95).toInt()
 
     val grid = SwingApplications.startTileGrid(AppConfigs.newConfig()
-            .defaultSize(Size.create(windowWidth, windowHeight))
-            .defaultTileset(CP437TilesetResources.rexPaint12x12())
+            .withSize(Size.create(windowWidth, windowHeight))
+            .withDefaultTileset(CP437TilesetResources.rexPaint12x12())
             .build())
 
 

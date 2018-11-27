@@ -1,10 +1,14 @@
 package org.hexworks.microcline.panels
 
+import org.hexworks.microcline.common.DrawMode
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.component.Panel
+import org.hexworks.zircon.api.component.RadioButtonGroup
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.internal.component.impl.DefaultRadioButton
+import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
 const val TOOLS_P_SIZE_X = 16
 const val TOOLS_P_SIZE_Y = 7
@@ -14,27 +18,29 @@ class ToolsPanel(
         position: Position,
         private val panel: Panel = Components.panel()
                 .wrapWithBox(true)
-                .title("Tools")
-                .size(Sizes.create(TOOLS_P_SIZE_X, TOOLS_P_SIZE_Y).plus(Sizes.create(2, 2)))
-                .position(position)
+                .withTitle("Tools")
+                .withSize(Sizes.create(TOOLS_P_SIZE_X, TOOLS_P_SIZE_Y).plus(Sizes.create(2, 2)))
+                .withPosition(position)
+                .withComponentRenderer(NoOpComponentRenderer())
+                .build(),
+        private val toolOptions: RadioButtonGroup = Components.radioButtonGroup()
+                .withSize(Sizes.create(TOOLS_P_SIZE_X, TOOLS_P_SIZE_Y))
+                .withPosition(Positions.defaultPosition())
                 .build()
 ): Panel by panel {
 
+
     init {
-        val toolOptions = Components.radioButtonGroup()
-                .size(Sizes.create(TOOLS_P_SIZE_X, TOOLS_P_SIZE_Y))
-                .position(Positions.defaultPosition())
-                .build()
-        toolOptions.addOption("select", "Select")
-        toolOptions.addOption("cell", "Cell")
-        toolOptions.addOption("line", "Line")
-        toolOptions.addOption("rectangle", "Rectangle")
-        toolOptions.addOption("oval", "Oval")
-        toolOptions.addOption("fill", "Fill")
-        toolOptions.addOption("text", "Text")
+        // TODO: add select() to RadioButton(Group?) interface in Zircon, so we can get rid of the casting here
+        (enumValues<DrawMode>().asList().map {
+            toolOptions.addOption(it.toString(), it.label)
+        }.first() as DefaultRadioButton).select()
+
         this.addComponent(toolOptions)
     }
 
     fun getPanel() = panel
+
+    fun selectedMode() = toolOptions.fetchSelectedOption().get()
 
 }
