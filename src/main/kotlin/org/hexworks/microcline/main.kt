@@ -26,6 +26,8 @@ fun main(args: Array<String>) {
 
     var currentView: View = DrawView(grid)
 
+    // TODO: we don't need this anymore, Screens and Components cover this functionality
+    // TODO: see: https://github.com/Hexworks/caves-of-zircon/blob/master/src/main/kotlin/org/hexworks/cavesofzircon/view/StartView.kt#L31
     grid.onInput { input ->
         val oldView = currentView
         currentView = currentView.respondToUserInput(input)

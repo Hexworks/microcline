@@ -40,6 +40,8 @@ class DrawController(
     }
 
     override fun mouseReleased(action: MouseAction) {
+        // TODO: we should have a state machine for this
+        // TODO: code like this is fine for start but gets convoluted quickly
         when (toolsPanel.selectedMode()) {
             DrawMode.FREE.toString() -> {
                 if (startPosition == action.position) {
@@ -48,6 +50,9 @@ class DrawController(
             }
             else -> {
                 // TODO: this is where layer merging should happen when Zircon supports it.
+                // TODO: you can draw the layer on the grid like this:
+                // TODO: tempLayer.drawOnto(grid)
+                // TODO: I'd keep the layers though, they will be useful for the actual layer functionality we gonna have
                 // Below is a raw implementation which doesn't work.
                 println("merge layer")
 //                tempLayer.fetchPositions().map {
@@ -70,6 +75,8 @@ class DrawController(
             }
             DrawMode.LINE.toString() -> {
                 // TODO: Zircon Layer should have a clear() method.
+                // TODO: now Zircon has it!
+                // TODO: tempLayer.clear()
                 tempLayer.fetchPositions().map {
                     tempLayer.setAbsoluteTileAt(it, Tile.empty())
                 }
