@@ -1,11 +1,11 @@
 package org.hexworks.microcline.views
 
-import org.hexworks.zircon.api.input.Input
+import org.hexworks.zircon.api.screen.Screen
 
 
 interface View {
 
-    fun display()
+    val screen: Screen
 
-    fun respondToUserInput(input: Input): View
+    fun dock()
 }

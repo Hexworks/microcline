@@ -2,6 +2,9 @@ package org.hexworks.microcline.common
 
 import org.hexworks.zircon.api.color.TileColor
 
+// TODO: this should be an enum instead (do we have names for the colors?)
+// TODO: if not an enum then an `object`. We should also consider having a `Palette` class
+// TODO: with implementations for each palette we support? somethign along those lines
 // XTerm 256 color palette
 val Palette = listOf(
         TileColor.fromString("#000000"),

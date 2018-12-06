@@ -7,10 +7,9 @@ import org.hexworks.microcline.panels.PalettePanel
 import org.hexworks.microcline.panels.ToolsPanel
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Tiles
-import org.hexworks.zircon.api.graphics.DrawSurface
 import org.hexworks.zircon.api.builder.graphics.LayerBuilder
 import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.data.Tile
+import org.hexworks.zircon.api.graphics.DrawSurface
 import org.hexworks.zircon.api.graphics.Layer
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.MouseAction
@@ -40,6 +39,8 @@ class DrawController(
     }
 
     override fun mouseReleased(action: MouseAction) {
+        // TODO: we should have a state machine for this
+        // TODO: code like this is fine for start but gets convoluted quickly
         when (toolsPanel.selectedMode()) {
             DrawMode.FREE.toString() -> {
                 if (startPosition == action.position) {
@@ -48,14 +49,8 @@ class DrawController(
             }
             else -> {
                 // TODO: this is where layer merging should happen when Zircon supports it.
-                // Below is a raw implementation which doesn't work.
                 println("merge layer")
-//                tempLayer.fetchPositions().map {
-//                    val t = tempLayer.getAbsoluteTileAt(it)
-//                    if (t.isPresent) {
-//                        grid.setTileAt(it, t.get())
-//                    }
-//                }
+//                tempLayer.drawOnto(grid)
 //                grid.removeLayer(tempLayer)
                 startPosition = TOP_LEFT_CORNER
             }
@@ -69,10 +64,7 @@ class DrawController(
                 startPosition = action.position
             }
             DrawMode.LINE.toString() -> {
-                // TODO: Zircon Layer should have a clear() method.
-                tempLayer.fetchPositions().map {
-                    tempLayer.setAbsoluteTileAt(it, Tile.empty())
-                }
+                tempLayer.clear()
                 drawLine(action, tempLayer)
             }
         }

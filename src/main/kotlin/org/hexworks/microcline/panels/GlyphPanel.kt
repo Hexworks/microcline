@@ -14,7 +14,10 @@ import org.hexworks.zircon.internal.util.CP437Utils
 const val GLYPH_P_SIZE_X = 16
 const val GLYPH_P_SIZE_Y = 16
 
-
+// TODO: This should be a Fragment instead
+// TODO: A Fragment is a reusable object which has a `root` Component and some additional view logic for
+// TODO: interacting with it.
+// TODO: we shouldn't derive from `Panel` here.
 class GlyphPanel(
         position: Position,
         private val panel: Panel = Components.panel()

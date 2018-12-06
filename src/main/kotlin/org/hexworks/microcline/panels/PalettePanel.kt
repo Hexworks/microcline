@@ -14,7 +14,10 @@ import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 const val PALETTE_P_SIZE_X = 16
 const val PALETTE_P_SIZE_Y = 16
 
-
+// TODO: This should be a Fragment instead
+// TODO: A Fragment is a reusable object which has a `root` Component and some additional view logic for
+// TODO: interacting with it.
+// TODO: we shouldn't derive from `Panel` here.
 class PalettePanel(
         position: Position,
         private val panel: Panel = Components.panel()
@@ -30,8 +33,8 @@ class PalettePanel(
     private var foregroundColor: TileColor = Palette[15]
 
     init {
-        select(Positions.create(1, 1), MouseButton.RIGHT)
-        select(Positions.create(15, 1), MouseButton.LEFT)
+        select(Positions.create(1, 1), MouseButton.RIGHT.id)
+        select(Positions.create(15, 1), MouseButton.LEFT.id)
     }
 
     fun selectedBackgroundColor() = backgroundColor
@@ -52,7 +55,7 @@ class PalettePanel(
         }
         val color = Palette[((position.y - 1) * PALETTE_P_SIZE_Y) + (position.x - 1)]
         when (button) {
-            MouseButton.RIGHT -> {
+            MouseButton.RIGHT.id -> {
                 backgroundColor = color
             } else -> {
                 foregroundColor = color

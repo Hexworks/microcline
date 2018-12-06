@@ -14,7 +14,7 @@ class GlyphController(
 
     override fun mousePressed(action: MouseAction) {
         // Only the left mouse button can be used
-        if (action.button != MouseButton.LEFT) {
+        if (action.button != MouseButton.LEFT.id) {
             return
         }
 

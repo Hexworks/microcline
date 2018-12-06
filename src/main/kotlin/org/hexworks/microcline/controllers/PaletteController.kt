@@ -13,8 +13,11 @@ class PaletteController(
 ) : MouseListener {
 
     override fun mousePressed(action: MouseAction) {
+        // TODO: `action` can be destructured like this:
+        // TODO: val (actionType, button, position) = action
+        // TODO: more here: https://kotlinlang.org/docs/reference/multi-declarations.html
         // Center mouse button is ignored
-        if (action.button == MouseButton.CENTER) {
+        if (action.button == MouseButton.CENTER.id) {
             return
         }
 
@@ -23,6 +26,7 @@ class PaletteController(
 
         // Ignore if clicked on the border
         // TODO: must be a better way... possible zircon feature?
+        // TODO: we can use buttons for this (we can have buttons now without decoration)
         if ((mPos.x <= pos.x) || (mPos.x > pos.x + PALETTE_P_SIZE_X) ||
                 (mPos.y <= pos.y) || (mPos.y > pos.y + PALETTE_P_SIZE_Y)) {
             return
