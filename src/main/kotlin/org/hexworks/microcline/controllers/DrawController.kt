@@ -7,10 +7,9 @@ import org.hexworks.microcline.panels.PalettePanel
 import org.hexworks.microcline.panels.ToolsPanel
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Tiles
-import org.hexworks.zircon.api.graphics.DrawSurface
 import org.hexworks.zircon.api.builder.graphics.LayerBuilder
 import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.data.Tile
+import org.hexworks.zircon.api.graphics.DrawSurface
 import org.hexworks.zircon.api.graphics.Layer
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.MouseAction
@@ -50,17 +49,8 @@ class DrawController(
             }
             else -> {
                 // TODO: this is where layer merging should happen when Zircon supports it.
-                // TODO: you can draw the layer on the grid like this:
-                // TODO: tempLayer.drawOnto(grid)
-                // TODO: I'd keep the layers though, they will be useful for the actual layer functionality we gonna have
-                // Below is a raw implementation which doesn't work.
                 println("merge layer")
-//                tempLayer.fetchPositions().map {
-//                    val t = tempLayer.getAbsoluteTileAt(it)
-//                    if (t.isPresent) {
-//                        grid.setTileAt(it, t.get())
-//                    }
-//                }
+//                tempLayer.drawOnto(grid)
 //                grid.removeLayer(tempLayer)
                 startPosition = TOP_LEFT_CORNER
             }
@@ -74,12 +64,7 @@ class DrawController(
                 startPosition = action.position
             }
             DrawMode.LINE.toString() -> {
-                // TODO: Zircon Layer should have a clear() method.
-                // TODO: now Zircon has it!
-                // TODO: tempLayer.clear()
-                tempLayer.fetchPositions().map {
-                    tempLayer.setAbsoluteTileAt(it, Tile.empty())
-                }
+                tempLayer.clear()
                 drawLine(action, tempLayer)
             }
         }

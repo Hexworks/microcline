@@ -24,6 +24,7 @@ class DrawView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
         // TODO: controllers and views should be instantiated in main (or some external entity)
         // TODO: I'm not sure how this should work but we should think about solutions
+
         // Create controllers and wire them up to panels
         val glyphController = GlyphController(glyphPanel)
         glyphPanel.onMouseAction(glyphController)
@@ -31,7 +32,6 @@ class DrawView(tileGrid: TileGrid) : BaseView(tileGrid) {
         val paletteController = PaletteController(palettePanel)
         palettePanel.onMouseAction(paletteController)
 
-        // TODO: having DrawController implement mouse listener is a nice touch!
         val drawController = DrawController(tileGrid, drawPanel, glyphPanel, palettePanel, toolsPanel)
         drawPanel.onMouseAction(drawController)
 
