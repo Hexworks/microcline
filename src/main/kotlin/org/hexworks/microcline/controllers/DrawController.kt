@@ -9,12 +9,16 @@ import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.builder.graphics.LayerBuilder
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.graphics.DrawSurface
 import org.hexworks.zircon.api.graphics.Layer
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.listener.MouseListener
 import org.hexworks.zircon.api.shape.LineFactory
+import org.hexworks.zircon.api.shape.EllipseFactory
+import org.hexworks.zircon.api.shape.RectangleFactory
+import org.hexworks.zircon.api.shape.Shape
 
 
 class DrawController(
@@ -48,7 +52,8 @@ class DrawController(
                 }
             }
             else -> {
-                // TODO: this is where layer merging should happen when Zircon supports it.
+                // TODO: this is where "layer merging" should happen.
+                // TODO: commented out as it's still buggy in Zircon.
                 println("merge layer")
 //                tempLayer.drawOnto(grid)
 //                grid.removeLayer(tempLayer)
@@ -67,15 +72,20 @@ class DrawController(
                 tempLayer.clear()
                 drawLine(action, tempLayer)
             }
+            DrawMode.ELLIPSE.toString() -> {
+                tempLayer.clear()
+                drawEllipse(action, tempLayer)
+            }
+            DrawMode.RECTANGLE.toString() -> {
+                tempLayer.clear()
+                drawRectangle(action, tempLayer)
+            }
         }
     }
 
     private fun drawTile(action: MouseAction, surface: DrawSurface) {
         surface.draw(
-                drawable = Tiles.newBuilder()
-                        .withCharacter(glyphPanel.selectedGlyph().character)
-                        .withBackgroundColor(palettePanel.selectedBackgroundColor())
-                        .withForegroundColor(palettePanel.selectedForegroundColor()).build(),
+                drawable = buildTile(),
                 position = action.position.minus(drawPanel.position))
     }
 
@@ -83,13 +93,43 @@ class DrawController(
         val lineStart = startPosition.minus(startPosition)
         val lineEnd = action.position.minus(startPosition)
         val line = LineFactory.buildLine(lineStart, lineEnd)
-        val tile = Tiles.newBuilder()
-                .withCharacter(glyphPanel.selectedGlyph().character)
-                .withBackgroundColor(palettePanel.selectedBackgroundColor())
-                .withForegroundColor(palettePanel.selectedForegroundColor()).build()
+        val tile = buildTile()
         line.forEach {
             surface.draw(tile, startPosition.minus(drawPanel.position).plus(it))
         }
+    }
+
+    private fun drawEllipse(action: MouseAction, surface: DrawSurface) {
+        val start = startPosition.minus(startPosition)
+        val end = action.position.minus(startPosition)
+        val ellipse = EllipseFactory.buildEllipse(start, end)
+        val tile = buildTile()
+        ellipse.forEach {
+            surface.draw(tile, startPosition.minus(drawPanel.position).plus(it))
+        }
+    }
+
+    private fun drawRectangle(action: MouseAction, surface: DrawSurface) {
+        val start = startPosition.minus(startPosition)
+        val end = action.position.minus(startPosition)
+        val tile = buildTile()
+        listOf(
+                LineFactory.buildLine(start, Position.create(end.x, start.y)),
+                LineFactory.buildLine(start, Position.create(start.x, end.y)),
+                LineFactory.buildLine(end, Position.create(end.x, start.y)),
+                LineFactory.buildLine(end, Position.create(start.x, end.y))
+        ).map {
+            it.forEach { pos ->
+                surface.draw(tile, startPosition.minus(drawPanel.position).plus(pos))
+            }
+        }
+    }
+
+    private fun buildTile(): Tile {
+        return Tiles.newBuilder()
+                .withCharacter(glyphPanel.selectedGlyph().character)
+                .withBackgroundColor(palettePanel.selectedBackgroundColor())
+                .withForegroundColor(palettePanel.selectedForegroundColor()).build()
     }
 
     companion object {
