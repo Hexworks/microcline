@@ -5,15 +5,11 @@ import org.hexworks.microcline.controllers.GlyphController
 import org.hexworks.microcline.controllers.PaletteController
 import org.hexworks.microcline.panels.*
 import org.hexworks.zircon.api.Positions
-import org.hexworks.zircon.api.Screens
 import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.grid.TileGrid
-import org.hexworks.zircon.api.input.Input
 
 
-class DrawView(tileGrid: TileGrid) : View {
-
-    private val screen = Screens.createScreenFor(tileGrid)
+class DrawView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
     init {
         // Create the panels, top to bottom
@@ -47,11 +43,4 @@ class DrawView(tileGrid: TileGrid) : View {
         screen.addComponent(drawPanel.getPanel())
     }
 
-    override fun display() {
-        screen.display()
-    }
-
-    override fun respondToUserInput(input: Input): View {
-        return this
-    }
 }

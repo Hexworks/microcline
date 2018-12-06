@@ -17,7 +17,7 @@ class PaletteController(
         // TODO: val (actionType, button, position) = action
         // TODO: more here: https://kotlinlang.org/docs/reference/multi-declarations.html
         // Center mouse button is ignored
-        if (action.button == MouseButton.CENTER) {
+        if (action.button == MouseButton.CENTER.id) {
             return
         }
 

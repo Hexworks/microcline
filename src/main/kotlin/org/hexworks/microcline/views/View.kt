@@ -1,13 +1,11 @@
 package org.hexworks.microcline.views
 
-import org.hexworks.zircon.api.input.Input
+import org.hexworks.zircon.api.screen.Screen
 
 
-// TODO: let's use this: https://github.com/Hexworks/caves-of-zircon/blob/master/src/main/kotlin/org/hexworks/cavesofzircon/view/View.kt
-// TODO: with this base class instead: https://github.com/Hexworks/caves-of-zircon/blob/master/src/main/kotlin/org/hexworks/cavesofzircon/view/BaseView.kt
 interface View {
 
-    fun display()
+    val screen: Screen
 
-    fun respondToUserInput(input: Input): View
+    fun dock()
 }

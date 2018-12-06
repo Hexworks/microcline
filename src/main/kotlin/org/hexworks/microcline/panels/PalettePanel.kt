@@ -33,8 +33,8 @@ class PalettePanel(
     private var foregroundColor: TileColor = Palette[15]
 
     init {
-        select(Positions.create(1, 1), MouseButton.RIGHT)
-        select(Positions.create(15, 1), MouseButton.LEFT)
+        select(Positions.create(1, 1), MouseButton.RIGHT.id)
+        select(Positions.create(15, 1), MouseButton.LEFT.id)
     }
 
     fun selectedBackgroundColor() = backgroundColor
@@ -55,7 +55,7 @@ class PalettePanel(
         }
         val color = Palette[((position.y - 1) * PALETTE_P_SIZE_Y) + (position.x - 1)]
         when (button) {
-            MouseButton.RIGHT -> {
+            MouseButton.RIGHT.id -> {
                 backgroundColor = color
             } else -> {
                 foregroundColor = color
