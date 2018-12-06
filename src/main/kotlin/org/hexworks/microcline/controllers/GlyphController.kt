@@ -1,9 +1,9 @@
 package org.hexworks.microcline.controllers
 
 import org.hexworks.microcline.common.MouseButton
-import org.hexworks.microcline.panels.GLYPH_P_SIZE_X
-import org.hexworks.microcline.panels.GLYPH_P_SIZE_Y
-import org.hexworks.microcline.panels.GlyphPanel
+import org.hexworks.microcline.components.GLYPH_P_SIZE_X
+import org.hexworks.microcline.components.GLYPH_P_SIZE_Y
+import org.hexworks.microcline.components.GlyphPanel
 import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.listener.MouseListener
 

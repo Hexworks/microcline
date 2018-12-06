@@ -18,7 +18,8 @@ buildscript {
 }
 
 ext {
-    zirconVersion = "2018.5.34-PREVIEW"
+    zirconVersion = "2018.12.25-XMAS"
+    cobaltVersion = "2018.0.20-BETA"
     junitVersion = "4.12"
     mockitoVersion = "1.10.19"
     assertjVersion = "3.6.2"
@@ -31,6 +32,7 @@ ext {
             slf4j_simple  : "org.slf4j:slf4j-simple:$slf4jVersion",
             zircon_core   : "org.hexworks.zircon:zircon.core-jvm:$zirconVersion",
             zircon_swing  : "org.hexworks.zircon:zircon.jvm.swing:$zirconVersion",
+            cobalt        : "org.hexworks.cobalt:cobalt.databinding-jvm:$cobaltVersion",
             junit         : "junit:junit:$junitVersion",
             mockito       : "org.mockito:mockito-all:$mockitoVersion",
             assertj       : "org.assertj:assertj-core:$assertjVersion"
@@ -80,6 +82,8 @@ dependencies {
     compile libraries.zircon_core
     compile libraries.zircon_swing
 
+    compile libraries.cobalt
+    
     testCompile libraries.junit
     testCompile libraries.mockito
     testCompile libraries.assertj

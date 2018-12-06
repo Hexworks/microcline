@@ -1,4 +1,4 @@
-package org.hexworks.microcline.panels
+package org.hexworks.microcline.components
 
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
@@ -32,7 +32,7 @@ class GlyphPanel(
     private var glyph: CharacterTile = Tiles.defaultTile()
 
     init {
-        // TODO: this should be (1, 1) relative to the panel
+        // TODO: this should be (1, 1) relative to the wrapper
         select(Positions.create(2, 2))
     }
 

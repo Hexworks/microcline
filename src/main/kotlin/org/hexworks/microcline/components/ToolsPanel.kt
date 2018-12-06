@@ -1,4 +1,4 @@
-package org.hexworks.microcline.panels
+package org.hexworks.microcline.components
 
 import org.hexworks.microcline.common.DrawMode
 import org.hexworks.zircon.api.Components

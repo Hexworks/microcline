@@ -6,7 +6,6 @@ enum class DrawMode(val label: String) {
     LINE("Line"),
     RECTANGLE("Rectangle"),
     ELLIPSE("Ellipse"),
-    FILL("Fill"),
     TEXT("Text"),
     SELECT("Select"),
 }

@@ -1,10 +1,10 @@
 package org.hexworks.microcline.controllers
 
 import org.hexworks.microcline.common.DrawMode
-import org.hexworks.microcline.panels.DrawPanel
-import org.hexworks.microcline.panels.GlyphPanel
-import org.hexworks.microcline.panels.PalettePanel
-import org.hexworks.microcline.panels.ToolsPanel
+import org.hexworks.microcline.components.DrawPanel
+import org.hexworks.microcline.components.GlyphPanel
+import org.hexworks.microcline.components.PalettePanel
+import org.hexworks.microcline.components.ToolsPanel
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.builder.graphics.LayerBuilder
@@ -17,8 +17,6 @@ import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.listener.MouseListener
 import org.hexworks.zircon.api.shape.LineFactory
 import org.hexworks.zircon.api.shape.EllipseFactory
-import org.hexworks.zircon.api.shape.RectangleFactory
-import org.hexworks.zircon.api.shape.Shape
 
 
 class DrawController(

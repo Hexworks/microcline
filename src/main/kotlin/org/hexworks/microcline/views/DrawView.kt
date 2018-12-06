@@ -3,7 +3,7 @@ package org.hexworks.microcline.views
 import org.hexworks.microcline.controllers.DrawController
 import org.hexworks.microcline.controllers.GlyphController
 import org.hexworks.microcline.controllers.PaletteController
-import org.hexworks.microcline.panels.*
+import org.hexworks.microcline.components.*
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.grid.TileGrid
@@ -12,7 +12,7 @@ import org.hexworks.zircon.api.grid.TileGrid
 class DrawView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
     init {
-        // Create the panels, top to bottom
+        // Create the components, top to bottom
         val glyphPanel = GlyphPanel(Positions.offset1x1())
         val palettePanel = PalettePanel(Positions.bottomLeftOf(glyphPanel.getPanel()))
         val toolsPanel = ToolsPanel(Positions.bottomLeftOf(palettePanel.getPanel()))
@@ -25,7 +25,7 @@ class DrawView(tileGrid: TileGrid) : BaseView(tileGrid) {
         // TODO: controllers and views should be instantiated in main (or some external entity)
         // TODO: I'm not sure how this should work but we should think about solutions
 
-        // Create controllers and wire them up to panels
+        // Create controllers and wire them up to components
         val glyphController = GlyphController(glyphPanel)
         glyphPanel.onMouseAction(glyphController)
 
@@ -35,7 +35,7 @@ class DrawView(tileGrid: TileGrid) : BaseView(tileGrid) {
         val drawController = DrawController(tileGrid, drawPanel, glyphPanel, palettePanel, toolsPanel)
         drawPanel.onMouseAction(drawController)
 
-        // Add panels to screen
+        // Add components to screen
         screen.addComponent(glyphPanel.getPanel())
         screen.addComponent(palettePanel.getPanel())
         screen.addComponent(toolsPanel.getPanel())
