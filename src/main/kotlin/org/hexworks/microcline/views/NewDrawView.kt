@@ -7,7 +7,8 @@ import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.grid.TileGrid
 
 
-class NewDrawView(tileGrid: TileGrid, state: State) : BaseView(tileGrid) {
+class NewDrawView(tileGrid: TileGrid,
+                  state: State = State(tileGrid)) : BaseView(tileGrid) {
 
     init {
         val drawArea = DrawArea(Positions.defaultPosition(), state)

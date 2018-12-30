@@ -32,7 +32,7 @@ class DrawArea(position: Position,
         wrapper.addComponent(panel)
 
         // Attach controller to panel.
-        panel.onMouseAction(DrawAreaController())
+        panel.onMouseAction(DrawAreaController(state, position))
     }
 
 }
