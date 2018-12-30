@@ -2,7 +2,7 @@ package org.hexworks.microcline.components
 
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.common.DrawMode
-import org.hexworks.microcline.config.NewConfig
+import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.dialogs.FileSelectorDialog
 import org.hexworks.microcline.dialogs.LayerSelectorDialog
 import org.hexworks.microcline.dialogs.ModeSelectorDialog
@@ -28,7 +28,7 @@ class ToolBelt(screen: Screen,
                state: State,
                val panel: Panel = Components.panel()
                        .wrapWithBox(true)
-                       .withSize(Size.create(NewConfig.WINDOW_WIDTH, NewConfig.TOOLBELT_HEIGHT + 2 * NewConfig.BORDER_SIZE))
+                       .withSize(Size.create(Config.WINDOW_WIDTH, Config.TOOLBELT_HEIGHT + 2 * Config.BORDER_SIZE))
                        .withPosition(position)
                        .build()
 ) {

@@ -15,7 +15,6 @@ class Tool(position: Position,
            labelText: String,
            component: Component,
            clickHandler: (MouseAction) -> Unit,
-
            label: Label = Components.label()
                    .withPosition(Position.zero())
                    .withText("$labelText: ")

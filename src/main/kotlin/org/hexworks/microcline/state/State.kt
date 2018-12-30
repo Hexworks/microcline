@@ -2,7 +2,7 @@ package org.hexworks.microcline.state
 
 import org.hexworks.microcline.common.DrawMode
 import org.hexworks.microcline.common.Palette
-import org.hexworks.microcline.config.NewConfig
+import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.events.DrawModeChanged
 import org.hexworks.microcline.events.TileChanged
 import org.hexworks.zircon.api.Layers
@@ -35,7 +35,7 @@ class State(val tileGrid: TileGrid) {
         }
 
     var layer: Layer = Layers.newBuilder()
-            .withSize(Size.create(NewConfig.DRAW_AREA_WIDTH, NewConfig.DRAW_AREA_HEIGHT))
+            .withSize(Size.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT))
             .build()
 
     companion object {
