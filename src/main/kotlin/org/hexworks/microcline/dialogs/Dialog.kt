@@ -1,5 +1,6 @@
 package org.hexworks.microcline.dialogs
 
+import org.hexworks.zircon.api.ColorThemes
 import org.hexworks.zircon.api.builder.component.ModalBuilder
 import org.hexworks.zircon.api.component.Container
 import org.hexworks.zircon.api.component.modal.Modal
@@ -24,6 +25,7 @@ abstract class Dialog(private val screen: Screen,
                     if (withClose) {
                         container.addFragment(CloseButtonFragment(it, container))
                     }
+                    container.applyColorTheme(ColorThemes.amigaOs())
                 }
     }
 }

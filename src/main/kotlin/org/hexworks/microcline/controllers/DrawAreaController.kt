@@ -25,7 +25,8 @@ class DrawAreaController(private val state: State,
         // We always create a temporary layer for drawing.
         startPosition = action.position
         tempLayer = LayerBuilder.newBuilder()
-                .withSize(state.layer.size)
+                .withSize(state.canvas.size)
+                .withOffset(Position.offset1x1())
                 .build()
         state.tileGrid.pushLayer(tempLayer)
     }
@@ -37,7 +38,7 @@ class DrawAreaController(private val state: State,
             }
         }
         println("merge layer")
-        tempLayer.drawOnto(state.tileGrid)
+        tempLayer.drawOnto(state.canvas)
         state.tileGrid.removeLayer(tempLayer)
         startPosition = initPosition
     }
