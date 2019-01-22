@@ -1,12 +1,12 @@
 package org.hexworks.microcline.components
 
 import org.hexworks.cobalt.events.api.subscribe
-import org.hexworks.microcline.common.DrawMode
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.dialogs.FileSelectorDialog
 import org.hexworks.microcline.dialogs.LayerSelectorDialog
 import org.hexworks.microcline.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.dialogs.TileSelectorDialog
+import org.hexworks.microcline.drawers.Drawer
 import org.hexworks.microcline.events.DrawModeChanged
 import org.hexworks.microcline.events.MousePosition
 import org.hexworks.microcline.events.TileChanged
@@ -25,7 +25,6 @@ import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
 class ToolBelt(screen: Screen,
                position: Position,
-               state: State,
                val panel: Panel = Components.panel()
                        .wrapWithBox(true)
                        .withSize(Size.create(Config.WINDOW_WIDTH, Config.TOOLBELT_HEIGHT + 2 * Config.BORDER_SIZE))
@@ -61,7 +60,7 @@ class ToolBelt(screen: Screen,
                 "Tile",
                 tilePanel,
                 { action: MouseAction ->
-                    screen.openModal(TileSelectorDialog(screen, state))
+                    screen.openModal(TileSelectorDialog(screen))
                 }
         )
         val modeTool = Tool(
@@ -69,7 +68,7 @@ class ToolBelt(screen: Screen,
                 "Mode",
                 modeText,
                 { action: MouseAction ->
-                    screen.openModal(ModeSelectorDialog(screen, state))
+                    screen.openModal(ModeSelectorDialog(screen))
                 }
         )
         val layerTool = Tool(
@@ -109,8 +108,8 @@ class ToolBelt(screen: Screen,
         panel.addComponent(yCoordTool.wrapper)
 
         // Init selectors.
-        updateTile(state.tile)
-        updateMode(state.mode)
+        updateTile(State.tile)
+        updateMode(State.drawer)
 
         // Event subscriptions.
         Zircon.eventBus.subscribe<MousePosition> {
@@ -128,8 +127,8 @@ class ToolBelt(screen: Screen,
         tilePanel.setTileAt(Position.zero(), tile.withModifiers(Modifiers.border()))
     }
 
-    fun updateMode(mode: DrawMode) {
-        modeText.text = mode.label
+    fun updateMode(mode: Drawer) {
+        modeText.text = mode.name()
     }
 
     fun updateLayer(layer: String) {

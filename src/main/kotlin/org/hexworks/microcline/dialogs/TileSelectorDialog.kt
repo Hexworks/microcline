@@ -1,7 +1,7 @@
 package org.hexworks.microcline.dialogs
 
-import org.hexworks.microcline.common.MouseButton
-import org.hexworks.microcline.common.Palette
+import org.hexworks.microcline.data.MouseButton
+import org.hexworks.microcline.data.Palette
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
@@ -18,7 +18,7 @@ import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 import org.hexworks.zircon.internal.util.CP437Utils
 
 
-class TileSelectorDialog(screen: Screen, private val state: State) : Dialog(screen) {
+class TileSelectorDialog(screen: Screen) : Dialog(screen) {
 
     override val container = Components.panel()
             .withTitle("Tile")
@@ -64,8 +64,8 @@ class TileSelectorDialog(screen: Screen, private val state: State) : Dialog(scre
                         .withComponentRenderer(NoOpComponentRenderer())
                         .build().also { palettePanel ->
                             // Select current colors.
-                            selectColor(palettePanel, colorPosition(state.tile.foregroundColor), MouseButton.LEFT.id)
-                            selectColor(palettePanel, colorPosition(state.tile.backgroundColor), MouseButton.RIGHT.id)
+                            selectColor(palettePanel, colorPosition(State.tile.foregroundColor), MouseButton.LEFT.id)
+                            selectColor(palettePanel, colorPosition(State.tile.backgroundColor), MouseButton.RIGHT.id)
 
                             palettePanel.onMouseAction(object : MouseListener {
                                 override fun mousePressed(action: MouseAction) {
@@ -112,9 +112,9 @@ class TileSelectorDialog(screen: Screen, private val state: State) : Dialog(scre
         when (button) {
             MouseButton.LEFT.id -> {
                 fg = color
-                bg = state.tile.backgroundColor
+                bg = State.tile.backgroundColor
             } else -> {
-                fg = state.tile.foregroundColor
+                fg = State.tile.foregroundColor
                 bg = color
             }
         }
@@ -149,7 +149,7 @@ class TileSelectorDialog(screen: Screen, private val state: State) : Dialog(scre
         }
 
         // Update State.
-        state.tile = state.tile.withBackgroundColor(bg).withForegroundColor(fg)
+        State.tile = State.tile.withBackgroundColor(bg).withForegroundColor(fg)
     }
 
     private fun colorPosition(color: TileColor): Position {
@@ -158,7 +158,7 @@ class TileSelectorDialog(screen: Screen, private val state: State) : Dialog(scre
     }
 
     private fun glyphPosition(): Position {
-        val idx = CP437Utils.fetchCP437IndexForChar(state.tile.asCharacterTile().get().character)
+        val idx = CP437Utils.fetchCP437IndexForChar(State.tile.asCharacterTile().get().character)
         return Positions.create(idx % 16, idx / 16).plus(Position.offset1x1())
     }
 
@@ -180,9 +180,9 @@ class TileSelectorDialog(screen: Screen, private val state: State) : Dialog(scre
         panel.setTileAt(position, tile.withBackgroundColor(ANSITileColor.CYAN).withForegroundColor(ANSITileColor.RED))
 
         // Update State.
-        val fg = state.tile.foregroundColor
-        val bg = state.tile.backgroundColor
-        state.tile = tile.withBackgroundColor(bg).withForegroundColor(fg)
+        val fg = State.tile.foregroundColor
+        val bg = State.tile.backgroundColor
+        State.tile = tile.withBackgroundColor(bg).withForegroundColor(fg)
     }
 
 }

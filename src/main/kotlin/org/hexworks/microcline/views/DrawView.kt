@@ -2,19 +2,27 @@ package org.hexworks.microcline.views
 
 import org.hexworks.microcline.components.DrawArea
 import org.hexworks.microcline.components.ToolBelt
-import org.hexworks.microcline.state.State
+import org.hexworks.zircon.api.ColorThemes
 import org.hexworks.zircon.api.Positions
-import org.hexworks.zircon.api.grid.TileGrid
+import org.hexworks.zircon.api.color.ANSITileColor
+import org.hexworks.zircon.api.mvc.base.BaseView
 
 
-class DrawView(tileGrid: TileGrid,
-               state: State = State(tileGrid)) : BaseView(tileGrid) {
+class DrawView : BaseView() {
 
-    init {
-        val drawArea = DrawArea(Positions.defaultPosition(), state)
-        val toolBelt = ToolBelt(screen, Positions.bottomLeftOf(drawArea.wrapper), state)
+    override val theme = ColorThemes.newBuilder()
+            .withPrimaryBackgroundColor(ANSITileColor.BLACK)
+            .withSecondaryBackgroundColor(ANSITileColor.BLACK)
+            .withPrimaryForegroundColor(ANSITileColor.WHITE)
+            .withSecondaryForegroundColor(ANSITileColor.WHITE)
+            .withAccentColor(ANSITileColor.BRIGHT_WHITE)
+            .build()
 
-        screen.addComponent(drawArea.wrapper)
+    override fun onDock() {
+        val drawArea = DrawArea(Positions.defaultPosition())
+        val toolBelt = ToolBelt(screen, Positions.bottomLeftOf(drawArea.panel))
+
+        screen.addComponent(drawArea.panel)
         screen.addComponent(toolBelt.panel)
     }
 }

@@ -1,4 +1,4 @@
-package org.hexworks.microcline.common
+package org.hexworks.microcline.data
 
 // TODO: add this to zircon?
 enum class MouseButton(val id: Int) {
