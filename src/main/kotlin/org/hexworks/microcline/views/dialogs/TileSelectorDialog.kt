@@ -1,4 +1,4 @@
-package org.hexworks.microcline.dialogs
+package org.hexworks.microcline.views.dialogs
 
 import org.hexworks.microcline.data.MouseButton
 import org.hexworks.microcline.data.Palette

@@ -3,7 +3,7 @@ package org.hexworks.microcline.controllers
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.ifPresent
 import org.hexworks.microcline.data.DrawCommand
-import org.hexworks.microcline.events.MousePosition
+import org.hexworks.microcline.data.events.MousePosition
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Layers
 import org.hexworks.zircon.api.data.Position

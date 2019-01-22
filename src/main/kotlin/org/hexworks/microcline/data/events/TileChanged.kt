@@ -1,4 +1,4 @@
-package org.hexworks.microcline.events
+package org.hexworks.microcline.data.events
 
 import org.hexworks.cobalt.events.api.Event
 import org.hexworks.zircon.api.data.Tile

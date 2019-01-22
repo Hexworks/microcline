@@ -2,14 +2,14 @@ package org.hexworks.microcline.components
 
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
-import org.hexworks.microcline.dialogs.FileSelectorDialog
-import org.hexworks.microcline.dialogs.LayerSelectorDialog
-import org.hexworks.microcline.dialogs.ModeSelectorDialog
-import org.hexworks.microcline.dialogs.TileSelectorDialog
+import org.hexworks.microcline.views.dialogs.FileSelectorDialog
+import org.hexworks.microcline.views.dialogs.LayerSelectorDialog
+import org.hexworks.microcline.views.dialogs.ModeSelectorDialog
+import org.hexworks.microcline.views.dialogs.TileSelectorDialog
 import org.hexworks.microcline.drawers.Drawer
-import org.hexworks.microcline.events.DrawModeChanged
-import org.hexworks.microcline.events.MousePosition
-import org.hexworks.microcline.events.TileChanged
+import org.hexworks.microcline.data.events.DrawModeChanged
+import org.hexworks.microcline.data.events.MousePosition
+import org.hexworks.microcline.data.events.TileChanged
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Modifiers

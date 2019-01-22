@@ -4,8 +4,8 @@ import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.Drawers
 import org.hexworks.microcline.data.Palette
 import org.hexworks.microcline.drawers.Drawer
-import org.hexworks.microcline.events.DrawModeChanged
-import org.hexworks.microcline.events.TileChanged
+import org.hexworks.microcline.data.events.DrawModeChanged
+import org.hexworks.microcline.data.events.TileChanged
 import org.hexworks.zircon.api.Blocks
 import org.hexworks.zircon.api.Layers
 import org.hexworks.zircon.api.Tiles
