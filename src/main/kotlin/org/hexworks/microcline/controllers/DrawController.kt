@@ -2,12 +2,12 @@ package org.hexworks.microcline.controllers
 
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.ifPresent
+import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.DrawCommand
 import org.hexworks.microcline.data.events.MousePosition
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Layers
 import org.hexworks.zircon.api.Modifiers
-import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.graphics.Layer
 import org.hexworks.zircon.api.input.MouseAction
@@ -17,13 +17,10 @@ import org.hexworks.zircon.internal.Zircon
 
 class DrawController : MouseListener {
 
-    // All layers have the same size so it's OK to grab the first layer's.
-    private val layerSize = State.layers[0].size
-
     private var maybeTempLayer = Maybe.empty<Layer>()
     private var maybeStartPosition = Maybe.empty<Position>()
     private var selectionLayer = Layers.newBuilder()
-            .withSize(layerSize)
+            .withSize(Config.DRAW_SIZE)
             .build().also {
                 State.drawing.pushOverlayAt(it, 0)
             }
@@ -41,6 +38,10 @@ class DrawController : MouseListener {
     }
 
     override fun mousePressed(action: MouseAction) {
+        if (!isDrawAllowed()) {
+            return
+        }
+
         val position = action.position - Position.offset1x1()
         maybeStartPosition = Maybe.of(position)
 
@@ -48,9 +49,9 @@ class DrawController : MouseListener {
         if (!maybeTempLayer.isPresent) {
             maybeTempLayer = Maybe.of(
                     Layers.newBuilder()
-                            .withSize(layerSize)
+                            .withSize(Config.DRAW_SIZE)
                             .build())
-            State.drawing.pushOverlayAt(maybeTempLayer.get(), State.selectedLayerIndex)
+            State.drawing.pushOverlayAt(maybeTempLayer.get(), 1)
         }
 
         // Draw the initial tile (if drawer draws is at all) with border.
@@ -60,6 +61,10 @@ class DrawController : MouseListener {
     }
 
     override fun mouseDragged(action: MouseAction) {
+        if (!isDrawAllowed()) {
+            return
+        }
+
         maybeStartPosition.ifPresent { startPosition ->
             maybeTempLayer.ifPresent { tempLayer ->
                 val position = action.position - Position.offset1x1()
@@ -84,6 +89,10 @@ class DrawController : MouseListener {
     }
 
     override fun mouseReleased(action: MouseAction) {
+        if (!isDrawAllowed()) {
+            return
+        }
+
         maybeStartPosition.ifPresent { startPosition ->
             maybeTempLayer.ifPresent { tempLayer ->
                 val position = action.position - Position.offset1x1()
@@ -97,10 +106,10 @@ class DrawController : MouseListener {
                 // Draw the thing onto the real layer.
                 State.drawer.draw(
                         DrawCommand(State.tile, startPosition, position, true),
-                        State.layers[State.selectedLayerIndex])
+                        State.layerRegistry.selected.get().layer)
 
                 // Cleanup
-                State.drawing.removeOverlay(tempLayer, State.selectedLayerIndex)
+                State.drawing.removeOverlay(tempLayer, 1)
                 maybeStartPosition = Maybe.empty()
                 maybeTempLayer = Maybe.empty()
             }
@@ -109,6 +118,14 @@ class DrawController : MouseListener {
 
     override fun mouseExited(action: MouseAction) {
         selectionLayer.clear()
+    }
+
+    private fun isDrawAllowed(): Boolean {
+        // Do not allow drawing if selected layer is locked.
+        if (State.layerRegistry.selected.isPresent) {
+            return !State.layerRegistry.selected.get().lockedProperty.value
+        }
+        return false
     }
 
 }

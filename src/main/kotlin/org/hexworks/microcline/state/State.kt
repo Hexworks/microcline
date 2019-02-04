@@ -1,22 +1,22 @@
 package org.hexworks.microcline.state
 
+import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.Drawers
 import org.hexworks.microcline.data.Palette
-import org.hexworks.microcline.drawers.Drawer
 import org.hexworks.microcline.data.events.DrawModeChanged
+import org.hexworks.microcline.data.events.LayerOrderChanged
 import org.hexworks.microcline.data.events.TileChanged
+import org.hexworks.microcline.drawers.Drawer
+import org.hexworks.microcline.layers.LayerRegistry
 import org.hexworks.zircon.api.Blocks
-import org.hexworks.zircon.api.Layers
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.builder.game.GameAreaBuilder
 import org.hexworks.zircon.api.data.Block
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Size3D
-import org.hexworks.zircon.api.graphics.Layer
 import org.hexworks.zircon.internal.Zircon
 import org.hexworks.zircon.internal.util.CP437Utils
-import java.util.*
 
 
 object State {
@@ -27,22 +27,39 @@ object State {
             .withLayers(Tiles.empty())
             .build()
 
+    /**
+     * Manages layer actions (create, remove, move, select, clear, etc...)
+     */
+    val layerRegistry = LayerRegistry()
+
+    /**
+     * Displays the visible layers on the screen.
+     */
     val drawing = GameAreaBuilder<Tile, Block<Tile>>()
             .withActualSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, Config.MAX_LAYERS))
             .withVisibleSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, Config.MAX_LAYERS))
             .withLayersPerBlock(1)
             .withDefaultBlock(EMPTY_BLOCK)
-            .build()
+            .build().apply {
+                Zircon.eventBus.subscribe<LayerOrderChanged> {
+                    // In case of a LayerOrderChanged event, we remove all overlays and re-add the visible ones.
+                    // Layer order can be changed by the following:
+                    // - new layer created
+                    // - layer removed
+                    // - layer position changed (moved up/down)
+                    // - layer visibility changed
+                    do {
+                        val x = popOverlayAt(1)
+                    } while (x.isPresent)
 
-    val layers = LinkedList<Layer>().apply {
-        push(Layers.newBuilder().withSize(drawing.visibleSize().to2DSize()).build())
-    }.also {
-        it.forEachIndexed { index, layer ->
-            drawing.pushOverlayAt(layer, index)
-        }
-    }
+                    layerRegistry.visibleLayers().forEach { layer ->
+                        pushOverlayAt(layer.layer, 1)
+                    }
+                }
 
-    var selectedLayerIndex = 0
+                // We're now subscribed to the event, so create the first layer.
+                layerRegistry.create()
+            }
 
     /**
      * Stores the currently selected [Tile] (glyph + colors). When changed it sends a [TileChanged] event.

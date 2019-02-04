@@ -1,4 +1,4 @@
-package org.hexworks.microcline.playground
+package org.hexworks.microcline.playground.pastebin_demo
 
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.map
@@ -173,9 +173,9 @@ object DrawingExample {
                             gameAreaOffset = Positions.create(TOOLS_WIDTH + 1, 1),
                             layerLevel = chosenLayer.first,
                             chosenTile = Tiles.newBuilder()
-                                    .withCharacter((chosenLayer.first+65).toChar())
-                                    .withForegroundColor(TileColors.create(255,0,0))
-                                    .withBackgroundColor(TileColors.create(0,255,255))
+                                    .withCharacter((chosenLayer.first + 65).toChar())
+                                    .withForegroundColor(TileColors.create(255, 0, 0))
+                                    .withBackgroundColor(TileColors.create(0, 255, 255))
                                     .build()),
                     gameArea = gameArea,
                     mouseAction = mouseAction)

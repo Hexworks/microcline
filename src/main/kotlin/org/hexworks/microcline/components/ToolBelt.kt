@@ -8,6 +8,7 @@ import org.hexworks.microcline.views.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.views.dialogs.TileSelectorDialog
 import org.hexworks.microcline.drawers.Drawer
 import org.hexworks.microcline.data.events.DrawModeChanged
+import org.hexworks.microcline.data.events.LayerSelected
 import org.hexworks.microcline.data.events.MousePosition
 import org.hexworks.microcline.data.events.TileChanged
 import org.hexworks.microcline.state.State
@@ -110,6 +111,7 @@ class ToolBelt(screen: Screen,
         // Init selectors.
         updateTile(State.tile)
         updateMode(State.drawer)
+        updateLayer(State.layerRegistry.selected.get().labelProperty.value)
 
         // Event subscriptions.
         Zircon.eventBus.subscribe<MousePosition> {
@@ -120,6 +122,9 @@ class ToolBelt(screen: Screen,
         }
         Zircon.eventBus.subscribe<TileChanged> {
             updateTile(it.tile)
+        }
+        Zircon.eventBus.subscribe<LayerSelected> {
+            updateLayer(it.layer.labelProperty.value)
         }
     }
 
