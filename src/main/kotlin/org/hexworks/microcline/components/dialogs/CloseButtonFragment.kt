@@ -1,4 +1,4 @@
-package org.hexworks.microcline.views.dialogs
+package org.hexworks.microcline.components.dialogs
 
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.ComponentAlignment

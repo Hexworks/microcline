@@ -1,4 +1,4 @@
-package org.hexworks.microcline.views.dialogs
+package org.hexworks.microcline.components.dialogs
 
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.data.events.LayerOrderChanged

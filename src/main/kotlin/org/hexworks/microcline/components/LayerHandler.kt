@@ -1,6 +1,7 @@
-package org.hexworks.microcline.layers
+package org.hexworks.microcline.components
 
-import org.hexworks.microcline.layers.fragments.*
+import org.hexworks.microcline.components.layerfragments.*
+import org.hexworks.microcline.layers.Layer
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.data.Position
 

@@ -2,10 +2,10 @@ package org.hexworks.microcline.components
 
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
-import org.hexworks.microcline.views.dialogs.FileSelectorDialog
-import org.hexworks.microcline.views.dialogs.LayerSelectorDialog
-import org.hexworks.microcline.views.dialogs.ModeSelectorDialog
-import org.hexworks.microcline.views.dialogs.TileSelectorDialog
+import org.hexworks.microcline.components.dialogs.FileSelectorDialog
+import org.hexworks.microcline.components.dialogs.LayerSelectorDialog
+import org.hexworks.microcline.components.dialogs.ModeSelectorDialog
+import org.hexworks.microcline.components.dialogs.TileSelectorDialog
 import org.hexworks.microcline.drawers.Drawer
 import org.hexworks.microcline.data.events.DrawModeChanged
 import org.hexworks.microcline.data.events.LayerSelected

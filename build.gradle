@@ -1,6 +1,6 @@
 allprojects {
     group "org.hexworks.microcline"
-    version "2018.0.1-PREVIEW"
+    version "2019.0.1-PREVIEW"
 }
 
 buildscript {

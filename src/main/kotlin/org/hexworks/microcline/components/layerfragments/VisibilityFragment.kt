@@ -1,4 +1,4 @@
-package org.hexworks.microcline.layers.fragments
+package org.hexworks.microcline.components.layerfragments
 
 import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
