@@ -10,7 +10,7 @@ class LayerHandler(position: Position, isFirst: Boolean, isLast: Boolean, val la
 
     val panel = Components.panel()
             .withPosition(position)
-            .withSize(23, 1)
+            .withSize(22, 1)
             .build().apply {
                 addFragment(SelectFragment(Position.create(1, 0), layer))
                 addFragment(VisibilityFragment(Position.create(2, 0), layer.visibleProperty))

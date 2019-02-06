@@ -11,8 +11,8 @@ import org.hexworks.zircon.internal.component.modal.EmptyModalResult
 
 class CloseButtonFragment(modal: Modal<EmptyModalResult>, parent: Container) : Fragment {
 
-    override val root = Components.button().withText("Close")
-            .withAlignmentWithin(parent, ComponentAlignment.BOTTOM_RIGHT)
+    override val root = Components.button().withText("OK")
+            .withAlignmentWithin(parent, ComponentAlignment.BOTTOM_CENTER)
             .build().apply {
                 onMouseReleased {
                     modal.close(EmptyModalResult)

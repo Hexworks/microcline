@@ -22,7 +22,7 @@ class TileSelectorDialog(screen: Screen) : Dialog(screen) {
 
     override val container = Components.panel()
             .withTitle("Tile")
-            .withSize(40,25)
+            .withSize(40,23)
             .withBoxType(BoxType.DOUBLE)
             .wrapWithBox()
             .build().also { panel ->
