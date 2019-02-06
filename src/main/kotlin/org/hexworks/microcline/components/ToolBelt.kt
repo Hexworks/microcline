@@ -100,7 +100,7 @@ class ToolBelt(screen: Screen,
         updateTile(State.tile)
         updateMode(State.drawer)
         updateLayer(State.layerRegistry.selected.get().labelProperty.value)
-        updateFile(State.fileName)
+        updateFile(Config.NONAME_FILE)
 
         // Event subscriptions.
         Zircon.eventBus.subscribe<TileChanged> {
@@ -140,4 +140,5 @@ class ToolBelt(screen: Screen,
         xPosText.text = x.toString()
         yPosText.text = y.toString()
     }
+
 }

@@ -1,5 +1,6 @@
 package org.hexworks.microcline.state
 
+import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.Drawers
@@ -18,6 +19,7 @@ import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Size3D
 import org.hexworks.zircon.internal.Zircon
 import org.hexworks.zircon.internal.util.CP437Utils
+import java.io.File
 
 
 object State {
@@ -88,12 +90,12 @@ object State {
         }
 
     /**
-     * Stores the name of the currently selected file.
+     * Stores the currently selected file.
      */
-    var fileName: String = FILE_NONAME
+    var file = Maybe.empty<File>()
         set(value) {
             field = value
-            Zircon.eventBus.publish(FileChanged(value))
+            Zircon.eventBus.publish(FileChanged(if (!value.isEmpty()) value.get().name else Config.NONAME_FILE))
         }
 
 }

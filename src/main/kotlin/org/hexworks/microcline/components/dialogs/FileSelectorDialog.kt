@@ -1,11 +1,14 @@
 package org.hexworks.microcline.components.dialogs
 
+import org.hexworks.cobalt.datatypes.Maybe
+import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.kotlin.onMouseReleased
 import org.hexworks.zircon.api.screen.Screen
+import javax.swing.JFileChooser
 
 
 class FileSelectorDialog(screen: Screen) : Dialog(screen) {
@@ -19,9 +22,17 @@ class FileSelectorDialog(screen: Screen) : Dialog(screen) {
                 addComponent(Components.textArea()
                         .withPosition(Position.offset1x1())
                         .withSize(30,5)
-                        .withText(State.fileName)
+                        .withText(if (!State.file.isEmpty()) State.file.get().absolutePath else Config.NONAME_FILE)
                         .build().apply {
                             disable()
+                            onMouseReleased {
+                                JFileChooser().also { fc ->
+                                    if (fc.showDialog(null, "Select") == JFileChooser.APPROVE_OPTION) {
+                                        text = fc.selectedFile.absolutePath
+                                        State.file = Maybe.of(fc.selectedFile)
+                                    }
+                                }
+                            }
                         })
 
                 addComponent(Components.button()
@@ -53,7 +64,6 @@ class FileSelectorDialog(screen: Screen) : Dialog(screen) {
                                 println("save: persist state")
                             }
                         })
-
             }
 
 }
