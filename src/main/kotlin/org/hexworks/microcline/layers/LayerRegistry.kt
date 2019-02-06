@@ -90,6 +90,10 @@ class LayerRegistry {
         Zircon.eventBus.publish(LayerSelected(layer))
     }
 
+    fun layers(): List<Layer> {
+        return order.toList()
+    }
+
     fun visibleLayers(): List<Layer> {
         return order.filter { it.visibleProperty.value }
     }

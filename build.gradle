@@ -18,8 +18,8 @@ buildscript {
 }
 
 ext {
-    zirconVersion = "2019.0.9-PREVIEW"
-    cobaltVersion = "2018.1.0-PREVIEW"
+    zirconVersion = "2019.0.10-PREVIEW"
+    cobaltVersion = "2018.1.1-PREVIEW"
     junitVersion = "4.12"
     mockitoVersion = "1.10.19"
     assertjVersion = "3.6.2"
