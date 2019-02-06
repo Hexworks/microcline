@@ -1,4 +1,4 @@
-package org.hexworks.microcline.common
+package org.hexworks.microcline.data
 
 import org.hexworks.zircon.api.color.TileColor
 

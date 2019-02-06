@@ -1,46 +1,28 @@
 package org.hexworks.microcline.views
 
-import org.hexworks.microcline.controllers.DrawController
-import org.hexworks.microcline.controllers.GlyphController
-import org.hexworks.microcline.controllers.PaletteController
-import org.hexworks.microcline.panels.*
+import org.hexworks.microcline.components.DrawArea
+import org.hexworks.microcline.components.ToolBelt
+import org.hexworks.zircon.api.ColorThemes
 import org.hexworks.zircon.api.Positions
-import org.hexworks.zircon.api.Sizes
-import org.hexworks.zircon.api.grid.TileGrid
+import org.hexworks.zircon.api.color.ANSITileColor
+import org.hexworks.zircon.api.mvc.base.BaseView
 
 
-class DrawView(tileGrid: TileGrid) : BaseView(tileGrid) {
+class DrawView : BaseView() {
 
-    init {
-        // Create the panels, top to bottom
-        val glyphPanel = GlyphPanel(Positions.offset1x1())
-        val palettePanel = PalettePanel(Positions.bottomLeftOf(glyphPanel.getPanel()))
-        val toolsPanel = ToolsPanel(Positions.bottomLeftOf(palettePanel.getPanel()))
-        val layersPanel = LayersPanel(Positions.bottomLeftOf(toolsPanel.getPanel()))
-        val drawPanel = DrawPanel(
-                Positions.topRightOf(glyphPanel.getPanel()),
-                Sizes.create(tileGrid.size.width.minus(20), tileGrid.size.height.minus(2))
-        )
+    override val theme = ColorThemes.newBuilder()
+            .withPrimaryBackgroundColor(ANSITileColor.BLACK)
+            .withSecondaryBackgroundColor(ANSITileColor.BLACK)
+            .withPrimaryForegroundColor(ANSITileColor.WHITE)
+            .withSecondaryForegroundColor(ANSITileColor.WHITE)
+            .withAccentColor(ANSITileColor.BRIGHT_WHITE)
+            .build()
 
-        // TODO: controllers and views should be instantiated in main (or some external entity)
-        // TODO: I'm not sure how this should work but we should think about solutions
+    override fun onDock() {
+        val drawArea = DrawArea(Positions.defaultPosition())
+        val toolBelt = ToolBelt(screen, Positions.bottomLeftOf(drawArea.panel))
 
-        // Create controllers and wire them up to panels
-        val glyphController = GlyphController(glyphPanel)
-        glyphPanel.onMouseAction(glyphController)
-
-        val paletteController = PaletteController(palettePanel)
-        palettePanel.onMouseAction(paletteController)
-
-        val drawController = DrawController(tileGrid, drawPanel, glyphPanel, palettePanel, toolsPanel)
-        drawPanel.onMouseAction(drawController)
-
-        // Add panels to screen
-        screen.addComponent(glyphPanel.getPanel())
-        screen.addComponent(palettePanel.getPanel())
-        screen.addComponent(toolsPanel.getPanel())
-        screen.addComponent(layersPanel.getPanel())
-        screen.addComponent(drawPanel.getPanel())
+        screen.addComponent(drawArea.panel)
+        screen.addComponent(toolBelt.panel)
     }
-
 }

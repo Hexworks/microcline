@@ -6,5 +6,7 @@ import org.hexworks.zircon.api.SwingApplications
 
 
 fun main(args: Array<String>) {
-    DrawView(SwingApplications.startTileGrid(Config.buildAppConfig())).dock()
+    val app = SwingApplications.startApplication(Config.buildAppConfig())
+
+    app.dock(DrawView())
 }

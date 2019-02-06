@@ -1,138 +1,131 @@
 package org.hexworks.microcline.controllers
 
-import org.hexworks.microcline.common.DrawMode
-import org.hexworks.microcline.panels.DrawPanel
-import org.hexworks.microcline.panels.GlyphPanel
-import org.hexworks.microcline.panels.PalettePanel
-import org.hexworks.microcline.panels.ToolsPanel
-import org.hexworks.zircon.api.Positions
-import org.hexworks.zircon.api.Tiles
-import org.hexworks.zircon.api.builder.graphics.LayerBuilder
+import org.hexworks.cobalt.datatypes.Maybe
+import org.hexworks.cobalt.datatypes.extensions.ifPresent
+import org.hexworks.microcline.config.Config
+import org.hexworks.microcline.data.DrawCommand
+import org.hexworks.microcline.data.events.MousePosition
+import org.hexworks.microcline.state.State
+import org.hexworks.zircon.api.Layers
+import org.hexworks.zircon.api.Modifiers
 import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.data.Tile
-import org.hexworks.zircon.api.graphics.DrawSurface
 import org.hexworks.zircon.api.graphics.Layer
-import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.MouseAction
 import org.hexworks.zircon.api.listener.MouseListener
-import org.hexworks.zircon.api.shape.LineFactory
-import org.hexworks.zircon.api.shape.EllipseFactory
-import org.hexworks.zircon.api.shape.RectangleFactory
-import org.hexworks.zircon.api.shape.Shape
+import org.hexworks.zircon.internal.Zircon
 
 
-class DrawController(
-        private val grid: TileGrid,
-        private val drawPanel: DrawPanel,
-        private val glyphPanel: GlyphPanel,
-        private val palettePanel: PalettePanel,
-        private val toolsPanel: ToolsPanel
-) : MouseListener {
+class DrawController : MouseListener {
 
-    private var startPosition: Position = TOP_LEFT_CORNER
-    private lateinit var tempLayer: Layer
+    private var maybeTempLayer = Maybe.empty<Layer>()
+    private var maybeStartPosition = Maybe.empty<Position>()
+    private var selectionLayer = Layers.newBuilder()
+            .withSize(Config.DRAW_SIZE)
+            .build().also {
+                State.drawing.pushOverlayAt(it, 0)
+            }
 
-    override fun mousePressed(action: MouseAction) {
-        // We always create a temporary layer for drawing.
-        startPosition = action.position
-        tempLayer = LayerBuilder.newBuilder()
-                .withSize(drawPanel.size)
-                .withOffset(drawPanel.position)
-                .build()
-        grid.pushLayer(tempLayer)
+    override fun mouseMoved(action: MouseAction) {
+        val position = action.position - Position.offset1x1()
+
+        // Select tile on mouse position.
+        selectionLayer.clear()
+        selectionLayer.draw(
+                State.tile.withModifiers(Modifiers.border()),
+                position)
+
+        Zircon.eventBus.publish(MousePosition(position.x, position.y))
     }
 
-    override fun mouseReleased(action: MouseAction) {
-        // TODO: we should have a state machine for this
-        // TODO: code like this is fine for start but gets convoluted quickly
-        when (toolsPanel.selectedMode()) {
-            DrawMode.FREE.toString() -> {
-                if (startPosition == action.position) {
-                    drawTile(action, tempLayer)
-                }
-            }
-            else -> {
-                // TODO: this is where "layer merging" should happen.
-                // TODO: commented out as it's still buggy in Zircon.
-                println("merge layer")
-//                tempLayer.drawOnto(grid)
-//                grid.removeLayer(tempLayer)
-                startPosition = TOP_LEFT_CORNER
-            }
+    override fun mousePressed(action: MouseAction) {
+        if (!isDrawAllowed()) {
+            return
         }
+
+        val position = action.position - Position.offset1x1()
+        maybeStartPosition = Maybe.of(position)
+
+        // Create the temporary layer.
+        if (!maybeTempLayer.isPresent) {
+            maybeTempLayer = Maybe.of(
+                    Layers.newBuilder()
+                            .withSize(Config.DRAW_SIZE)
+                            .build())
+            State.drawing.pushOverlayAt(maybeTempLayer.get(), 1)
+        }
+
+        // Draw the initial tile (if drawer draws is at all) with border.
+        State.drawer.draw(
+                DrawCommand(State.tile.withModifiers(Modifiers.border()), position, position, false),
+                maybeTempLayer.get())
     }
 
     override fun mouseDragged(action: MouseAction) {
-        when (toolsPanel.selectedMode()) {
-            DrawMode.FREE.toString() -> {
-                drawLine(action, tempLayer)
-                startPosition = action.position
-            }
-            DrawMode.LINE.toString() -> {
+        if (!isDrawAllowed()) {
+            return
+        }
+
+        maybeStartPosition.ifPresent { startPosition ->
+            maybeTempLayer.ifPresent { tempLayer ->
+                val position = action.position - Position.offset1x1()
+                Zircon.eventBus.publish(MousePosition(position.x, position.y))
+
+                // Clear selected tile.
+                selectionLayer.clear()
+
+                // Draw the temporary thing.
                 tempLayer.clear()
-                drawLine(action, tempLayer)
-            }
-            DrawMode.ELLIPSE.toString() -> {
-                tempLayer.clear()
-                drawEllipse(action, tempLayer)
-            }
-            DrawMode.RECTANGLE.toString() -> {
-                tempLayer.clear()
-                drawRectangle(action, tempLayer)
-            }
-        }
-    }
+                State.drawer.draw(
+                        DrawCommand(State.tile, startPosition, position, false),
+                        tempLayer)
 
-    private fun drawTile(action: MouseAction, surface: DrawSurface) {
-        surface.draw(
-                drawable = buildTile(),
-                position = action.position.minus(drawPanel.position))
-    }
-
-    private fun drawLine(action: MouseAction, surface: DrawSurface) {
-        val lineStart = startPosition.minus(startPosition)
-        val lineEnd = action.position.minus(startPosition)
-        val line = LineFactory.buildLine(lineStart, lineEnd)
-        val tile = buildTile()
-        line.forEach {
-            surface.draw(tile, startPosition.minus(drawPanel.position).plus(it))
-        }
-    }
-
-    private fun drawEllipse(action: MouseAction, surface: DrawSurface) {
-        val start = startPosition.minus(startPosition)
-        val end = action.position.minus(startPosition)
-        val ellipse = EllipseFactory.buildEllipse(start, end)
-        val tile = buildTile()
-        ellipse.forEach {
-            surface.draw(tile, startPosition.minus(drawPanel.position).plus(it))
-        }
-    }
-
-    private fun drawRectangle(action: MouseAction, surface: DrawSurface) {
-        val start = startPosition.minus(startPosition)
-        val end = action.position.minus(startPosition)
-        val tile = buildTile()
-        listOf(
-                LineFactory.buildLine(start, Position.create(end.x, start.y)),
-                LineFactory.buildLine(start, Position.create(start.x, end.y)),
-                LineFactory.buildLine(end, Position.create(end.x, start.y)),
-                LineFactory.buildLine(end, Position.create(start.x, end.y))
-        ).map {
-            it.forEach { pos ->
-                surface.draw(tile, startPosition.minus(drawPanel.position).plus(pos))
+                // Draw border around the tile on mouse position.
+                // This can be empty (depends on the drawer), so get the tile on position first.
+                tempLayer.draw(
+                        tempLayer.getTileAt(position).get().withModifiers(Modifiers.border()),
+                        position)
             }
         }
     }
 
-    private fun buildTile(): Tile {
-        return Tiles.newBuilder()
-                .withCharacter(glyphPanel.selectedGlyph().character)
-                .withBackgroundColor(palettePanel.selectedBackgroundColor())
-                .withForegroundColor(palettePanel.selectedForegroundColor()).build()
+    override fun mouseReleased(action: MouseAction) {
+        if (!isDrawAllowed()) {
+            return
+        }
+
+        maybeStartPosition.ifPresent { startPosition ->
+            maybeTempLayer.ifPresent { tempLayer ->
+                val position = action.position - Position.offset1x1()
+
+                // Select tile on mouse position.
+                selectionLayer.clear()
+                selectionLayer.draw(
+                        State.tile.withModifiers(Modifiers.border()),
+                        position)
+
+                // Draw the thing onto the real layer.
+                State.drawer.draw(
+                        DrawCommand(State.tile, startPosition, position, true),
+                        State.layerRegistry.selected.get().layer)
+
+                // Cleanup
+                State.drawing.removeOverlay(tempLayer, 1)
+                maybeStartPosition = Maybe.empty()
+                maybeTempLayer = Maybe.empty()
+            }
+        }
     }
 
-    companion object {
-        private val TOP_LEFT_CORNER = Positions.create(2, 2)
+    override fun mouseExited(action: MouseAction) {
+        selectionLayer.clear()
     }
+
+    private fun isDrawAllowed(): Boolean {
+        // Do not allow drawing if selected layer is locked.
+        if (State.layerRegistry.selected.isPresent) {
+            return !State.layerRegistry.selected.get().lockedProperty.value
+        }
+        return false
+    }
+
 }
