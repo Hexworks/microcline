@@ -12,25 +12,25 @@ object Layers {
         val l2 = r.create()
         val l3 = r.create()
         println("$l1, $l2, $l3")
-        println("1. layers: ${r.layers()}")
+        println("1. layers: ${r.visibleLayers()}")
 
         r.moveUp(l1)
-        println("2. layers: ${r.layers()}")
+        println("2. layers: ${r.visibleLayers()}")
 
         r.moveUp(l1)
-        println("3. layers: ${r.layers()}")
+        println("3. layers: ${r.visibleLayers()}")
 
         r.moveUp(l1)
-        println("4. layers: ${r.layers()}")
+        println("4. layers: ${r.visibleLayers()}")
 
         r.moveDown(l1)
-        println("5. layers: ${r.layers()}")
+        println("5. layers: ${r.visibleLayers()}")
 
         r.moveDown(l1)
-        println("6. layers: ${r.layers()}")
+        println("6. layers: ${r.visibleLayers()}")
 
         r.moveDown(l1)
-        println("7. layers: ${r.layers()}")
+        println("7. layers: ${r.visibleLayers()}")
 
     }
 

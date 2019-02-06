@@ -21,7 +21,7 @@ import org.hexworks.zircon.internal.util.CP437Utils
 
 object State {
 
-    private val DEFAULT_GLYPH = CP437Utils.convertCp437toUnicode(1)
+    private val DEFAULT_GLYPH = CP437Utils.convertCp437toUnicode(1) // Smiley face
     private val EMPTY_BLOCK = Blocks.newBuilder<Tile>()
             .withEmptyTile(Tiles.empty())
             .withLayers(Tiles.empty())
@@ -52,7 +52,8 @@ object State {
                         val x = popOverlayAt(1)
                     } while (x.isPresent)
 
-                    layerRegistry.visibleLayers().forEach { layer ->
+                    // The first layer is on the top, so pushing the overlays in reverse order.
+                    layerRegistry.visibleLayers().reversed().forEach { layer ->
                         pushOverlayAt(layer.layer, 1)
                     }
                 }

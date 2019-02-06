@@ -19,9 +19,6 @@ class LayerRegistry {
     var selected = Maybe.empty<Layer>()
 
     init {
-//        Zircon.eventBus.subscribe<LayerSelected> {
-//            select(it.layer)
-//        }
         Zircon.eventBus.subscribe<LayerMovedUp> {
             moveUp(it.layer)
         }
@@ -30,14 +27,12 @@ class LayerRegistry {
         }
     }
 
-    fun create(): Layer {
-        val layer = Layer("Layer $lastID")
-        order.add(0, layer)
-        lastID++
-        Zircon.eventBus.publish(LayerOrderChanged(false))
-        select(layer)
-        return layer
-    }
+    fun create() = Layer("Layer $lastID").also {
+            lastID++
+            order.add(0, it)
+            Zircon.eventBus.publish(LayerOrderChanged(false))
+            select(it)
+        }
 
     fun remove(layer: Layer) {
         // The last layer cannot be removed.
@@ -93,10 +88,6 @@ class LayerRegistry {
         layer.selectedProperty.value = true
         selected = Maybe.of(layer)
         Zircon.eventBus.publish(LayerSelected(layer))
-    }
-
-    fun layers(): List<Layer> {
-        return order.toList()
     }
 
     fun visibleLayers(): List<Layer> {
