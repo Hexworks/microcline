@@ -5,6 +5,7 @@ import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.Drawers
 import org.hexworks.microcline.data.Palette
 import org.hexworks.microcline.data.events.DrawModeChanged
+import org.hexworks.microcline.data.events.FileChanged
 import org.hexworks.microcline.data.events.LayerOrderChanged
 import org.hexworks.microcline.data.events.TileChanged
 import org.hexworks.microcline.drawers.Drawer
@@ -21,6 +22,7 @@ import org.hexworks.zircon.internal.util.CP437Utils
 
 object State {
 
+    const val FILE_NONAME = "<noname>"
     private val DEFAULT_GLYPH = CP437Utils.convertCp437toUnicode(1) // Smiley face
     private val EMPTY_BLOCK = Blocks.newBuilder<Tile>()
             .withEmptyTile(Tiles.empty())
@@ -28,12 +30,12 @@ object State {
             .build()
 
     /**
-     * Manages layer actions (create, remove, move, select, clear, etc...)
+     * Manages [Layer] actions (create, remove, move, select, clear, etc...)
      */
     val layerRegistry = LayerRegistry()
 
     /**
-     * Displays the visible layers on the screen.
+     * Displays the visible [Layers] on the screen.
      */
     val drawing = GameAreaBuilder<Tile, Block<Tile>>()
             .withActualSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, Config.MAX_LAYERS))
@@ -83,6 +85,15 @@ object State {
         set(value) {
             field = value
             Zircon.eventBus.publish(DrawModeChanged(value))
+        }
+
+    /**
+     * Stores the name of the currently selected file.
+     */
+    var fileName: String = FILE_NONAME
+        set(value) {
+            field = value
+            Zircon.eventBus.publish(FileChanged(value))
         }
 
 }
