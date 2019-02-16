@@ -4,6 +4,7 @@ import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.ifPresent
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.DrawCommand
+import org.hexworks.microcline.data.DrawingLayer
 import org.hexworks.microcline.data.events.MousePosition
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Layers
@@ -22,7 +23,7 @@ class DrawController : MouseListener {
     private var selectionLayer = Layers.newBuilder()
             .withSize(Config.DRAW_SIZE)
             .build().also {
-                State.drawing.pushOverlayAt(it, 0)
+                State.drawing.pushOverlayAt(it, DrawingLayer.CONTROLLER.index)
             }
 
     override fun mouseMoved(action: MouseAction) {

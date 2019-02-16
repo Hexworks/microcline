@@ -4,6 +4,7 @@ import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.Drawers
+import org.hexworks.microcline.data.DrawingLayer
 import org.hexworks.microcline.data.Palette
 import org.hexworks.microcline.data.events.DrawModeChanged
 import org.hexworks.microcline.data.events.FileChanged
@@ -24,7 +25,6 @@ import java.io.File
 
 object State {
 
-    const val FILE_NONAME = "<noname>"
     private val DEFAULT_GLYPH = CP437Utils.convertCp437toUnicode(1) // Smiley face
     private val EMPTY_BLOCK = Blocks.newBuilder<Tile>()
             .withEmptyTile(Tiles.empty())
@@ -34,14 +34,18 @@ object State {
     /**
      * Manages [Layer] actions (create, remove, move, select, clear, etc...)
      */
-    val layerRegistry = LayerRegistry()
+    var layerRegistry = LayerRegistry()
 
     /**
      * Displays the visible [Layers] on the screen.
+     * In the GameArea object we use 2 layers only:
+     * - index 0: home to DrawController's overlays only where we highlight the selected tile
+     *   and create the temporary shape layer;
+     * - index 1: home to the actual layers of the picture.
      */
     val drawing = GameAreaBuilder<Tile, Block<Tile>>()
-            .withActualSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, Config.MAX_LAYERS))
-            .withVisibleSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, Config.MAX_LAYERS))
+            .withActualSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, 2))
+            .withVisibleSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, 2))
             .withLayersPerBlock(1)
             .withDefaultBlock(EMPTY_BLOCK)
             .build().apply {
@@ -52,13 +56,11 @@ object State {
                     // - layer removed
                     // - layer position changed (moved up/down)
                     // - layer visibility changed
-                    do {
-                        val x = popOverlayAt(1)
-                    } while (x.isPresent)
+                    while (popOverlayAt(DrawingLayer.PICTURE.index).isPresent) {}
 
                     // The first layer is on the top, so pushing the overlays in reverse order.
                     layerRegistry.visibleLayers().reversed().forEach { layer ->
-                        pushOverlayAt(layer.layer, 1)
+                        pushOverlayAt(layer.layer, DrawingLayer.PICTURE.index)
                     }
                 }
 
@@ -97,5 +99,16 @@ object State {
             field = value
             Zircon.eventBus.publish(FileChanged(if (!value.isEmpty()) value.get().name else Config.NONAME_FILE))
         }
+
+    /**
+     * Resets program state.
+     */
+    fun reset() {
+        while(drawing.popOverlayAt(DrawingLayer.PICTURE.index).isPresent) {}
+        layerRegistry = LayerRegistry().apply {
+            create()
+        }
+        file = Maybe.empty()
+    }
 
 }

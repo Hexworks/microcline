@@ -6,6 +6,7 @@ import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.graphics.BoxType
+import org.hexworks.zircon.api.kotlin.onClosed
 import org.hexworks.zircon.api.kotlin.onMouseReleased
 import org.hexworks.zircon.api.screen.Screen
 import javax.swing.JFileChooser
@@ -19,7 +20,7 @@ class FileSelectorDialog(screen: Screen) : Dialog(screen) {
             .withBoxType(BoxType.DOUBLE)
             .wrapWithBox()
             .build().apply {
-                addComponent(Components.textArea()
+                val filePath = Components.textArea()
                         .withPosition(Position.offset1x1())
                         .withSize(30,5)
                         .withText(if (!State.file.isEmpty()) State.file.get().absolutePath else Config.NONAME_FILE)
@@ -33,7 +34,8 @@ class FileSelectorDialog(screen: Screen) : Dialog(screen) {
                                     }
                                 }
                             }
-                        })
+                        }
+                addComponent(filePath)
 
                 addComponent(Components.button()
                         .withPosition(1, 7)
@@ -42,6 +44,19 @@ class FileSelectorDialog(screen: Screen) : Dialog(screen) {
                         .build().apply {
                             onMouseReleased {
                                 println("new: reset state")
+                                // TODO: issue: modal opened from a modal is not displayed at all, breaks everything
+//                                val modal = YesNoDialog(screen).apply {
+//                                    root.onClosed {
+//                                        if (it == YesModalResult) {
+//                                            // DO
+//                                        } else {
+//                                            // DON'T DO
+//                                        }
+//                                    }
+//                                }
+//                                screen.openModal(modal)
+                                State.reset()
+                                filePath.text = Config.NONAME_FILE
                             }
                         })
 

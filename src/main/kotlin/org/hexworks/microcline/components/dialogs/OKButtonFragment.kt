@@ -9,7 +9,7 @@ import org.hexworks.zircon.api.kotlin.onMouseReleased
 import org.hexworks.zircon.internal.component.modal.EmptyModalResult
 
 
-class CloseButtonFragment(modal: Modal<EmptyModalResult>, parent: Container) : Fragment {
+class OKButtonFragment(modal: Modal<EmptyModalResult>, parent: Container) : Fragment {
 
     override val root = Components.button().withText("OK")
             .withAlignmentWithin(parent, ComponentAlignment.BOTTOM_CENTER)

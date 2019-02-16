@@ -23,9 +23,10 @@ abstract class Dialog(private val screen: Screen,
                 .withCenteredDialog(true)
                 .build().also {
                     if (withClose) {
-                        container.addFragment(CloseButtonFragment(it, container))
+                        container.addFragment(OKButtonFragment(it, container))
                     }
                     container.applyColorTheme(ColorThemes.amigaOs())
                 }
     }
+
 }

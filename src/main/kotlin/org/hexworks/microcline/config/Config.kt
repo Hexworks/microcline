@@ -18,7 +18,6 @@ object Config {
     const val BORDER_SIZE: Int = 1
     const val WINDOW_WIDTH: Int = 2 * BORDER_SIZE + DRAW_AREA_WIDTH
     const val WINDOW_HEIGHT: Int = 4 * BORDER_SIZE + DRAW_AREA_HEIGHT + TOOLBELT_HEIGHT
-    const val MAX_LAYERS: Int = 2
     const val NONAME_FILE: String = "<noname>"
 
     @Suppress("ConstantConditionIf")
