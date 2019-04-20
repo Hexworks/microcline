@@ -2,6 +2,7 @@ package org.hexworks.microcline.components.dialogs
 
 import org.hexworks.microcline.data.MouseButton
 import org.hexworks.microcline.data.Palette
+import org.hexworks.microcline.extensions.onMouseEvent
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
@@ -11,9 +12,11 @@ import org.hexworks.zircon.api.color.TileColor
 import org.hexworks.zircon.api.component.Panel
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.graphics.BoxType
-import org.hexworks.zircon.api.input.MouseAction
-import org.hexworks.zircon.api.listener.MouseListener
 import org.hexworks.zircon.api.screen.Screen
+import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_PRESSED
+import org.hexworks.zircon.api.uievent.Pass
+import org.hexworks.zircon.api.uievent.Processed
+import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
 import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 import org.hexworks.zircon.internal.util.CP437Utils
 
@@ -22,7 +25,7 @@ class TileSelectorDialog(screen: Screen) : Dialog(screen) {
 
     override val container = Components.panel()
             .withTitle("Tile")
-            .withSize(40,23)
+            .withSize(40, 23)
             .withBoxType(BoxType.DOUBLE)
             .wrapWithBox()
             .build().also { panel ->
@@ -35,26 +38,25 @@ class TileSelectorDialog(screen: Screen) : Dialog(screen) {
                             // Select current tile.
                             selectGlyph(glyphPanel, glyphPosition())
 
-                            glyphPanel.onMouseAction(object : MouseListener {
-                                override fun mousePressed(action: MouseAction) {
-                                    // Only the left mouse button can be used.
-                                    if (action.button != MouseButton.LEFT.id) {
-                                        return
-                                    }
-
-                                    // Calculate relative position of the mouse click.
-                                    val relativePosition = action.position
-                                            .minus(glyphPanel.position)
-                                            .minus(panel.position)
-
-                                    // Do not select border glyphs.
-                                    if (relativePosition.x < 1 || relativePosition.x > 16 || relativePosition.y < 1 || relativePosition.y > 16) {
-                                        return
-                                    }
-
-                                    selectGlyph(glyphPanel, relativePosition)
+                            glyphPanel.onMouseEvent(MOUSE_PRESSED, TARGET) { action ->
+                                // Only the left mouse button can be used.
+                                if (action.button != MouseButton.LEFT.id) {
+                                    return@onMouseEvent Pass
                                 }
-                            })
+
+                                // Calculate relative position of the mouse click.
+                                val relativePosition = action.position
+                                        .minus(glyphPanel.position)
+                                        .minus(panel.position)
+
+                                // Do not select border glyphs.
+                                if (relativePosition.x < 1 || relativePosition.x > 16 || relativePosition.y < 1 || relativePosition.y > 16) {
+                                    return@onMouseEvent Pass
+                                }
+
+                                selectGlyph(glyphPanel, relativePosition)
+                                Processed
+                            }
                         }
 
                 val palettePanel = Components.panel()
@@ -67,26 +69,26 @@ class TileSelectorDialog(screen: Screen) : Dialog(screen) {
                             selectColor(palettePanel, colorPosition(State.tile.foregroundColor), MouseButton.LEFT.id)
                             selectColor(palettePanel, colorPosition(State.tile.backgroundColor), MouseButton.RIGHT.id)
 
-                            palettePanel.onMouseAction(object : MouseListener {
-                                override fun mousePressed(action: MouseAction) {
-                                    // Center mouse button is ignored.
-                                    if (action.button == MouseButton.CENTER.id) {
-                                        return
-                                    }
-
-                                    // Calculate relative position of the mouse click.
-                                    val relativePosition = action.position
-                                            .minus(palettePanel.position)
-                                            .minus(panel.position)
-
-                                    // Do not select border glyphs.
-                                    if (relativePosition.x < 1 || relativePosition.x > 16 || relativePosition.y < 1 || relativePosition.y > 16) {
-                                        return
-                                    }
-
-                                    selectColor(palettePanel, relativePosition, action.button)
+                            palettePanel.onMouseEvent(MOUSE_PRESSED, TARGET) { action ->
+                                // Center mouse button is ignored.
+                                if (action.button == MouseButton.CENTER.id) {
+                                    return@onMouseEvent Pass
                                 }
-                            })
+
+                                // Calculate relative position of the mouse click.
+                                val relativePosition = action.position
+                                        .minus(palettePanel.position)
+                                        .minus(panel.position)
+
+                                // Do not select border glyphs.
+                                if (relativePosition.x < 1 || relativePosition.x > 16 || relativePosition.y < 1 || relativePosition.y > 16) {
+                                    return@onMouseEvent Pass
+                                }
+
+                                selectColor(palettePanel, relativePosition, action.button)
+                                Processed
+                            }
+
                         }
 
                 panel.addComponent(glyphPanel)
@@ -113,7 +115,8 @@ class TileSelectorDialog(screen: Screen) : Dialog(screen) {
             MouseButton.LEFT.id -> {
                 fg = color
                 bg = State.tile.backgroundColor
-            } else -> {
+            }
+            else -> {
                 fg = State.tile.foregroundColor
                 bg = color
             }

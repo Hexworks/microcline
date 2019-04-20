@@ -6,7 +6,7 @@ import org.hexworks.microcline.data.events.LayerOrderChanged
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.kotlin.onSelectionChanged
+import org.hexworks.zircon.api.extensions.onSelectionChanged
 import org.hexworks.zircon.internal.Zircon
 
 

@@ -2,6 +2,7 @@ package org.hexworks.microcline.controllers
 
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.ifPresent
+import org.hexworks.cobalt.logging.api.LoggerFactory
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.DrawCommand
 import org.hexworks.microcline.data.DrawingLayer
@@ -11,12 +12,19 @@ import org.hexworks.zircon.api.Layers
 import org.hexworks.zircon.api.Modifiers
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.graphics.Layer
-import org.hexworks.zircon.api.input.MouseAction
-import org.hexworks.zircon.api.listener.MouseListener
+import org.hexworks.zircon.api.uievent.MouseEvent
+import org.hexworks.zircon.api.uievent.MouseEventHandler
+import org.hexworks.zircon.api.uievent.MouseEventType.*
+import org.hexworks.zircon.api.uievent.Pass
+import org.hexworks.zircon.api.uievent.Processed
+import org.hexworks.zircon.api.uievent.UIEventPhase
+import org.hexworks.zircon.api.uievent.UIEventResponse
 import org.hexworks.zircon.internal.Zircon
 
 
-class DrawController : MouseListener {
+class DrawController : MouseEventHandler {
+
+    private val logger = LoggerFactory.getLogger(DrawController::class)
 
     private var maybeTempLayer = Maybe.empty<Layer>()
     private var maybeStartPosition = Maybe.empty<Position>()
@@ -26,7 +34,21 @@ class DrawController : MouseListener {
                 State.drawing.pushOverlayAt(it, DrawingLayer.CONTROLLER.index)
             }
 
-    override fun mouseMoved(action: MouseAction) {
+    override fun handle(event: MouseEvent, phase: UIEventPhase): UIEventResponse {
+        return when (event.type) {
+            MOUSE_MOVED -> mouseMoved(event)
+            MOUSE_PRESSED -> mousePressed(event)
+            MOUSE_DRAGGED -> mouseDragged(event)
+            MOUSE_RELEASED -> mouseReleased(event)
+            MOUSE_EXITED -> mouseExited(event)
+            else -> {
+                logger.debug("Mouse event not handled: $event")
+                Pass
+            }
+        }
+    }
+
+    private fun mouseMoved(action: MouseEvent): UIEventResponse {
         val position = action.position - Position.offset1x1()
 
         // Select tile on mouse position.
@@ -36,11 +58,12 @@ class DrawController : MouseListener {
                 position)
 
         Zircon.eventBus.publish(MousePosition(position.x, position.y))
+        return Processed
     }
 
-    override fun mousePressed(action: MouseAction) {
+    private fun mousePressed(action: MouseEvent): UIEventResponse {
         if (!isDrawAllowed()) {
-            return
+            return Pass
         }
 
         val position = action.position - Position.offset1x1()
@@ -59,11 +82,12 @@ class DrawController : MouseListener {
         State.drawer.draw(
                 DrawCommand(State.tile.withModifiers(Modifiers.border()), position, position, false),
                 maybeTempLayer.get())
+        return Processed
     }
 
-    override fun mouseDragged(action: MouseAction) {
+    private fun mouseDragged(action: MouseEvent): UIEventResponse {
         if (!isDrawAllowed()) {
-            return
+            return Pass
         }
 
         maybeStartPosition.ifPresent { startPosition ->
@@ -87,11 +111,12 @@ class DrawController : MouseListener {
                         position)
             }
         }
+        return Processed
     }
 
-    override fun mouseReleased(action: MouseAction) {
+    private fun mouseReleased(action: MouseEvent): UIEventResponse {
         if (!isDrawAllowed()) {
-            return
+            return Pass
         }
 
         maybeStartPosition.ifPresent { startPosition ->
@@ -115,10 +140,12 @@ class DrawController : MouseListener {
                 maybeTempLayer = Maybe.empty()
             }
         }
+        return Processed
     }
 
-    override fun mouseExited(action: MouseAction) {
+    private fun mouseExited(action: MouseEvent): UIEventResponse {
         selectionLayer.clear()
+        return Processed
     }
 
     private fun isDrawAllowed(): Boolean {

@@ -4,7 +4,7 @@ import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.kotlin.onSelectionChanged
+import org.hexworks.zircon.api.extensions.onSelectionChanged
 
 
 class LockFragment(position: Position, lockedProperty: Property<Boolean>) : Fragment {

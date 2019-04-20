@@ -9,9 +9,11 @@ import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.component.modal.Modal
 import org.hexworks.zircon.api.component.modal.ModalFragment
 import org.hexworks.zircon.api.component.modal.ModalResult
+import org.hexworks.zircon.api.extensions.onComponentEvent
 import org.hexworks.zircon.api.graphics.BoxType
-import org.hexworks.zircon.api.kotlin.onMouseReleased
 import org.hexworks.zircon.api.screen.Screen
+import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
+import org.hexworks.zircon.api.uievent.Processed
 
 
 object YesModalResult : ModalResult
@@ -23,8 +25,9 @@ class YesButtonFragment(modal: Modal<ModalResult>, parent: Container) : Fragment
     override val root = Components.button().withText("Yes")
             .withAlignmentWithin(parent, ComponentAlignment.BOTTOM_LEFT)
             .build().apply {
-                onMouseReleased {
+                onComponentEvent(ACTIVATED) {
                     modal.close(YesModalResult)
+                    Processed
                 }
             }
 }
@@ -34,8 +37,9 @@ class NoButtonFragment(modal: Modal<ModalResult>, parent: Container) : Fragment 
     override val root = Components.button().withText("No")
             .withAlignmentWithin(parent, ComponentAlignment.BOTTOM_RIGHT)
             .build().apply {
-                onMouseReleased {
+                onComponentEvent(ACTIVATED) {
                     modal.close(NoModalResult)
+                    Processed
                 }
             }
 }

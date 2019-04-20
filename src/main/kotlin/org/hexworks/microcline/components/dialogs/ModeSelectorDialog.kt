@@ -4,8 +4,8 @@ import org.hexworks.microcline.data.Drawers
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.api.extensions.onSelection
 import org.hexworks.zircon.api.graphics.BoxType
-import org.hexworks.zircon.api.kotlin.onSelection
 import org.hexworks.zircon.api.screen.Screen
 
 

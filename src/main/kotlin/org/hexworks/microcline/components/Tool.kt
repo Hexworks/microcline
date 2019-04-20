@@ -1,20 +1,23 @@
 package org.hexworks.microcline.components
 
+import org.hexworks.microcline.extensions.onMouseEvent
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Component
 import org.hexworks.zircon.api.component.Label
 import org.hexworks.zircon.api.component.Panel
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Size
-import org.hexworks.zircon.api.input.MouseAction
-import org.hexworks.zircon.api.listener.MouseListener
+import org.hexworks.zircon.api.uievent.MouseEvent
+import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_PRESSED
+import org.hexworks.zircon.api.uievent.Processed
+import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
 import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
 
 class Tool(position: Position,
            labelText: String,
            component: Component,
-           clickHandler: (MouseAction) -> Unit,
+           clickHandler: (MouseEvent) -> Unit,
            label: Label = Components.label()
                    .withPosition(Position.zero())
                    .withText("$labelText: ")
@@ -29,18 +32,16 @@ class Tool(position: Position,
 
     init {
         wrapper.addComponent(label)
-        label.onMouseAction(object : MouseListener {
-            override fun mousePressed(action: MouseAction) {
-                clickHandler(action)
-            }
-        })
+        label.onMouseEvent(MOUSE_PRESSED, TARGET) { action ->
+            clickHandler(action)
+            Processed
+        }
         component.moveTo(Position.topRightOf(label))
         wrapper.addComponent(component)
-        component.onMouseAction(object : MouseListener {
-            override fun mousePressed(action: MouseAction) {
-                clickHandler(action)
-            }
-        })
+        component.onMouseEvent(MOUSE_PRESSED, TARGET) { action ->
+            clickHandler(action)
+            Processed
+        }
     }
 
 }

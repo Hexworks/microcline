@@ -8,7 +8,6 @@ import org.hexworks.zircon.api.component.modal.ModalFragment
 import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.internal.component.modal.EmptyModalResult
 
-
 abstract class Dialog(private val screen: Screen,
                       withClose: Boolean = true,
                       darkenPercent: Double = .5) : ModalFragment<EmptyModalResult> {

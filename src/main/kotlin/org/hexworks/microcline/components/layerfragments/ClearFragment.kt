@@ -5,8 +5,11 @@ import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.api.extensions.onComponentEvent
 import org.hexworks.zircon.api.graphics.Layer
-import org.hexworks.zircon.api.kotlin.onMouseReleased
+import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
+import org.hexworks.zircon.api.uievent.Pass
+import org.hexworks.zircon.api.uievent.Processed
 
 
 class ClearFragment(position: Position, lockedProperty: Property<Boolean>, layer: Layer) : Fragment {
@@ -16,10 +19,11 @@ class ClearFragment(position: Position, lockedProperty: Property<Boolean>, layer
             .withText("C")
             .wrapSides(false)
             .build().apply {
-                onMouseReleased {
+                onComponentEvent(ACTIVATED) {
                     if (isEnabled) {
                         layer.clear()
-                    }
+                        Processed
+                    } else Pass
                 }
             }
 

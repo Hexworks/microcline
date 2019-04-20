@@ -8,9 +8,11 @@ import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.ComponentAlignment
 import org.hexworks.zircon.api.component.Container
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.api.extensions.onComponentEvent
 import org.hexworks.zircon.api.graphics.BoxType
-import org.hexworks.zircon.api.kotlin.onMouseReleased
 import org.hexworks.zircon.api.screen.Screen
+import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
+import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.internal.Zircon
 
 
@@ -18,7 +20,7 @@ class LayerSelectorDialog(screen: Screen) : Dialog(screen) {
 
     private val layerList = Components.panel()
             .withPosition(Position.create(0, 1))
-            .withSize(22,10)
+            .withSize(22, 10)
             .build().apply {
                 rebuildList(this)
 
@@ -32,7 +34,7 @@ class LayerSelectorDialog(screen: Screen) : Dialog(screen) {
 
     override val container = Components.panel()
             .withTitle("Layers")
-            .withSize(24,15)
+            .withSize(24, 15)
             .withBoxType(BoxType.DOUBLE)
             .wrapWithBox()
             .build().apply {
@@ -49,8 +51,9 @@ class LayerSelectorDialog(screen: Screen) : Dialog(screen) {
             container.addComponent(Components.button().withText("Add layer")
                     .withAlignmentWithin(container, ComponentAlignment.BOTTOM_CENTER)
                     .build().apply {
-                        onMouseReleased {
+                        onComponentEvent(ACTIVATED) {
                             State.layerRegistry.create()
+                            Processed
                         }
                     })
         }
