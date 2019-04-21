@@ -62,7 +62,6 @@ class FileSelectorDialog(screen: Screen,
                                     }
                                 }
                                 screen.openModal(modal)
-                                context.reset()
                                 filePath.text = Config.NONAME_FILE
                                 Processed
                             }

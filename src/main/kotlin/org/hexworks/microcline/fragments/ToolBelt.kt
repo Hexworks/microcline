@@ -2,14 +2,12 @@ package org.hexworks.microcline.fragments
 
 import org.hexworks.cobalt.databinding.api.extensions.bind
 import org.hexworks.cobalt.datatypes.extensions.map
-import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.dialogs.FileSelectorDialog
 import org.hexworks.microcline.dialogs.LayerSelectorDialog
 import org.hexworks.microcline.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.dialogs.TileSelectorDialog
-import org.hexworks.microcline.events.LayerSelected
 import org.hexworks.microcline.extensions.onMouseEvent
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
@@ -21,7 +19,6 @@ import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_MOVED
 import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
-import org.hexworks.zircon.internal.Zircon
 
 // TODO: use services
 class ToolBelt(screen: Screen,
@@ -102,22 +99,11 @@ class ToolBelt(screen: Screen,
         root.addFragment(fileTool)
         root.addComponent(positionText)
 
-        // Init selectors.
-        updateLayer(context.layerRegistry.selected.get().labelProperty.value)
-
-        // Event subscriptions.
-        Zircon.eventBus.subscribe<LayerSelected> {
-            updateLayer(it.layer.labelProperty.value)
-        }
         screen.onMouseEvent(MOUSE_MOVED, TARGET) {
             val pos = it.position - Positions.offset1x1()
             positionText.text = "X: ${pos.x} Y: ${pos.y}"
             Processed
         }
-    }
-
-    private fun updateLayer(layer: String) {
-        layerText.text = layer
     }
 
 }

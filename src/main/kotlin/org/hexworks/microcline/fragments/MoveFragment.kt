@@ -1,44 +1,38 @@
 package org.hexworks.microcline.fragments
 
-import org.hexworks.microcline.events.LayerMovedDown
-import org.hexworks.microcline.events.LayerMovedUp
-import org.hexworks.microcline.layers.Layer
+import org.hexworks.microcline.data.DrawLayer
+import org.hexworks.microcline.services.DrawLayerEditor
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.extensions.onComponentEvent
+import org.hexworks.zircon.api.graphics.Symbols
 import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
 import org.hexworks.zircon.api.uievent.Processed
-import org.hexworks.zircon.internal.Zircon
-import org.hexworks.zircon.internal.util.CP437Utils
 
 
-class MoveFragment(position: Position, upDisabled: Boolean, downDisabled: Boolean, layer: Layer) : Fragment {
+class MoveFragment(position: Position,
+                   layer: DrawLayer,
+                   editor: DrawLayerEditor) : Fragment {
 
     private val upButton = Components.button()
             .withPosition(Position.zero())
-            .withText(CP437Utils.convertCp437toUnicode(24).toString()) // Up arrow
+            .withText("${Symbols.ARROW_UP}")
             .wrapSides(false)
             .build().apply {
-                if (upDisabled) {
-                    disable()
-                }
                 onComponentEvent(ACTIVATED) {
-                    Zircon.eventBus.publish(LayerMovedUp(layer))
+                    editor.moveLayerUp(layer)
                     Processed
                 }
             }
 
     private val downButton = Components.button()
             .withPosition(Position.create(1, 0))
-            .withText(CP437Utils.convertCp437toUnicode(25).toString()) // Down arrow
+            .withText("${Symbols.ARROW_DOWN}")
             .wrapSides(false)
             .build().apply {
-                if (downDisabled) {
-                    disable()
-                }
                 onComponentEvent(ACTIVATED) {
-                    Zircon.eventBus.publish(LayerMovedDown(layer))
+                    editor.moveLayerDown(layer)
                     Processed
                 }
             }

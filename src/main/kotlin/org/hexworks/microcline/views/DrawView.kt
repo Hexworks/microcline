@@ -8,21 +8,26 @@ import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.mvc.base.BaseView
 
 
-class DrawView(private val context: EditorContext) : BaseView() {
+class DrawView(context: EditorContext) : BaseView() {
 
     override val theme = Config.THEME
 
-    override fun onDock() {
-
-        val drawArea = DrawArea(
+    val drawArea: DrawArea by lazy {
+        DrawArea(
                 position = Positions.defaultPosition(),
                 context = context)
+    }
 
-        screen.addFragment(drawArea)
-        screen.addFragment(ToolBelt(
+    private val toolBelt: ToolBelt by lazy {
+        ToolBelt(
                 screen = screen,
                 position = Positions.bottomLeftOf(drawArea.root),
-                context = context))
+                context = context)
+    }
+
+    override fun onDock() {
+        screen.addFragment(drawArea)
+        screen.addFragment(toolBelt)
     }
 
 }

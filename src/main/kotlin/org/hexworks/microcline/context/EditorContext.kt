@@ -2,14 +2,12 @@ package org.hexworks.microcline.context
 
 import org.hexworks.cobalt.databinding.api.createPropertyFrom
 import org.hexworks.cobalt.datatypes.Maybe
-import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
+import org.hexworks.microcline.data.DrawLayer
 import org.hexworks.microcline.data.DrawTools
-import org.hexworks.microcline.data.DrawingLayer
 import org.hexworks.microcline.data.Palettes
-import org.hexworks.microcline.events.LayerOrderChanged
 import org.hexworks.microcline.drawtools.DrawTool
-import org.hexworks.microcline.layers.LayerRegistry
+import org.hexworks.microcline.services.DrawLayerEditor
 import org.hexworks.zircon.api.Blocks
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.builder.game.GameAreaBuilder
@@ -18,48 +16,31 @@ import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Size3D
 import org.hexworks.zircon.api.graphics.Symbols
-import org.hexworks.zircon.internal.Zircon
 import java.io.File
 
+/**
+ * Context object which contains the
+ */
 class EditorContext {
 
     /**
-     * Manages [Layer] actions (create, remove, move, select, clear, etc...)
+     * Displays the visible [Layer] on the screen.
      */
-    var layerRegistry = LayerRegistry(this)
-
-    /**
-     * Displays the visible [Layers] on the screen.
-     * In the GameArea object we use 2 layers only:
-     * - index 0: home to DrawController's overlays only where we highlight the selected tile
-     *   and create the temporary shape layer;
-     * - index 1: home to the actual layers of the picture.
-     */
-    val drawing = GameAreaBuilder<Tile, Block<Tile>>()
+    val gameArea = GameAreaBuilder<CharacterTile, Block<CharacterTile>>()
             .withActualSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, 2))
             .withVisibleSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, 2))
             .withLayersPerBlock(1)
             .withDefaultBlock(EMPTY_BLOCK)
-            .build().apply {
-                Zircon.eventBus.subscribe<LayerOrderChanged> {
-                    // In case of a LayerOrderChanged event, we remove all overlays and re-add the visible ones.
-                    // Layer order can be changed by the following:
-                    // - new layer created
-                    // - layer removed
-                    // - layer position changed (moved up/down)
-                    // - layer visibility changed
-                    while (popOverlayAt(DrawingLayer.PICTURE.index).isPresent) {
-                    }
+            .build()
 
-                    // The first layer is on the top, so pushing the overlays in reverse order.
-                    layerRegistry.visibleLayers().reversed().forEach { layer ->
-                        pushOverlayAt(layer.layer, DrawingLayer.PICTURE.index)
-                    }
-                }
-
-                // We're now subscribed to the event, so create the first layer.
-                layerRegistry.create()
-            }
+    /**
+     * A [DrawLayerEditor] implements the functionality for editing
+     * draw layers (ordering, visibility, selection, etc).
+     */
+    val drawLayerEditor = DrawLayerEditor.create(
+            size = Config.DRAW_SIZE,
+            gameArea = gameArea,
+            context = this)
 
     /**
      * Property for the currently selected [Tile] (glyph + colors).
@@ -85,21 +66,12 @@ class EditorContext {
     val currentFileProperty = createPropertyFrom(Maybe.empty<File>())
     var currentFile: Maybe<File> by currentFileProperty.asDelegate()
 
-    /**
-     * Resets program state.
-     */
-    fun reset() {
-        while (drawing.popOverlayAt(DrawingLayer.PICTURE.index).isPresent) {
-        }
-        layerRegistry = LayerRegistry(this).apply {
-            create()
-        }
-        currentFile = Maybe.empty()
-    }
+    val selectedLayerProperty = drawLayerEditor.selectedLayerProperty
+    val selectedLayer: DrawLayer by selectedLayerProperty.asDelegate()
 
     companion object {
         private const val DEFAULT_GLYPH = Symbols.FACE_WHITE
-        private val EMPTY_BLOCK = Blocks.newBuilder<Tile>()
+        private val EMPTY_BLOCK = Blocks.newBuilder<CharacterTile>()
                 .withEmptyTile(Tiles.empty())
                 .withLayers(Tiles.empty())
                 .build()

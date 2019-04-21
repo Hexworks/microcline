@@ -1,32 +1,19 @@
 package org.hexworks.microcline.fragments
 
-import org.hexworks.cobalt.databinding.api.extensions.onChange
-import org.hexworks.cobalt.databinding.api.property.Property
-import org.hexworks.microcline.events.LayerOrderChanged
+import org.hexworks.microcline.data.DrawLayer
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.extensions.onSelectionChanged
-import org.hexworks.zircon.internal.Zircon
 
 
 class VisibilityFragment(position: Position,
-                         visibilityProperty: Property<Boolean>) : Fragment {
+                         layer: DrawLayer) : Fragment {
 
     override val root = Components.toggleButton()
             .withPosition(position)
-            .withText("V")
+            .withText("Visible")
             .wrapSides(false)
             .build().apply {
-                // TODO: .withIsSelected() does not work
-                isSelected = visibilityProperty.value
-
-                onSelectionChanged {
-                    visibilityProperty.value = it.newValue
-                    Zircon.eventBus.publish(LayerOrderChanged(true))
-                }
-                visibilityProperty.onChange {
-                    isSelected = it.newValue
-                }
+                selectedProperty.bind(layer.visibleProperty)
             }
 }
