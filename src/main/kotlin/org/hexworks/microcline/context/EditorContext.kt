@@ -7,7 +7,6 @@ import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.DrawTools
 import org.hexworks.microcline.data.DrawingLayer
 import org.hexworks.microcline.data.Palettes
-import org.hexworks.microcline.data.events.DrawModeChanged
 import org.hexworks.microcline.data.events.FileChanged
 import org.hexworks.microcline.data.events.LayerOrderChanged
 import org.hexworks.microcline.drawtools.DrawTool
@@ -75,13 +74,10 @@ class EditorContext {
     var selectedTile: Tile by selectedTileProperty.asDelegate()
 
     /**
-     * Stores the currently selected [DrawTool]. When changed it sends a [DrawModeChanged] event.
+     * Property for the currently selected [DrawTool].
      */
-    var drawTool: DrawTool = DrawTools.FREEHAND.drawTool
-        set(value) {
-            field = value
-            Zircon.eventBus.publish(DrawModeChanged(value))
-        }
+    val currentToolProperty = createPropertyFrom(DrawTools.FREEHAND.drawTool)
+    var currentTool: DrawTool by currentToolProperty.asDelegate()
 
     /**
      * Stores the currently selected file.

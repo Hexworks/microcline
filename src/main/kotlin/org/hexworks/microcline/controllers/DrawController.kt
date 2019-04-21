@@ -82,7 +82,7 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
 
         // Draw the initial tile (if drawTool draws is at all) with border.
         // TODO: rename this to `currentTool`
-        context.drawTool.draw(
+        context.currentTool.draw(
                 DrawCommand(context.selectedTile.withModifiers(Modifiers.border()), position, position, false),
                 maybeTempLayer.get())
         return Processed
@@ -103,7 +103,7 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
 
                 // Draw the temporary thing.
                 tempLayer.clear()
-                context.drawTool.draw(
+                context.currentTool.draw(
                         DrawCommand(context.selectedTile, startPosition, position, false),
                         tempLayer)
 
@@ -133,7 +133,7 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
                         position)
 
                 // Draw the thing onto the real layer.
-                context.drawTool.draw(
+                context.currentTool.draw(
                         DrawCommand(context.selectedTile, startPosition, position, true),
                         context.layerRegistry.selected.get().layer)
 

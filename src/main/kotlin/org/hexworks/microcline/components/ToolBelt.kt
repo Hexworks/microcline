@@ -1,5 +1,6 @@
 package org.hexworks.microcline.components
 
+import org.hexworks.cobalt.databinding.api.extensions.bind
 import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.components.dialogs.FileSelectorDialog
@@ -8,7 +9,6 @@ import org.hexworks.microcline.components.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.components.dialogs.TileSelectorDialog
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
-import org.hexworks.microcline.data.events.DrawModeChanged
 import org.hexworks.microcline.data.events.FileChanged
 import org.hexworks.microcline.data.events.LayerSelected
 import org.hexworks.microcline.data.events.MousePosition
@@ -24,6 +24,7 @@ import org.hexworks.zircon.internal.Zircon
 import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
 // TODO: use services
+// TODO: make this a fragment
 class ToolBelt(screen: Screen,
                position: Position,
                private val context: EditorContext,
@@ -39,9 +40,15 @@ class ToolBelt(screen: Screen,
             .withComponentRenderer(NoOpComponentRenderer())
             .build()
 
-    private val modeText = Components.textArea()
+    private val modeText = Components.button()
             .withSize(Size.create(9, 1))
-            .build().apply { disable() }
+            .withText(context.currentTool.name)
+            .wrapSides(false)
+            .build().apply {
+                textProperty.bind(context.currentToolProperty) {
+                    it.name
+                }
+            }
     private val layerText = Components.textArea()
             .withSize(Size.create(12, 1))
             .build().apply { disable() }
@@ -102,16 +109,12 @@ class ToolBelt(screen: Screen,
 
         // Init selectors.
         updateSelectedTile(context.selectedTile)
-        updateMode(context.drawTool)
         updateLayer(context.layerRegistry.selected.get().labelProperty.value)
         updateFile(Config.NONAME_FILE)
 
         // Event subscriptions.
         context.selectedTileProperty.onChange {
             updateSelectedTile(it.newValue)
-        }
-        Zircon.eventBus.subscribe<DrawModeChanged> {
-            updateMode(it.mode)
         }
         Zircon.eventBus.subscribe<LayerSelected> {
             updateLayer(it.layer.labelProperty.value)
@@ -126,10 +129,6 @@ class ToolBelt(screen: Screen,
 
     private fun updateSelectedTile(tile: Tile) {
         tilePanel.setTileAt(Position.zero(), tile.withModifiers(Modifiers.border()))
-    }
-
-    private fun updateMode(mode: DrawTool) {
-        modeText.text = mode.name
     }
 
     private fun updateLayer(layer: String) {

@@ -25,7 +25,7 @@ class ModeSelectorDialog(screen: Screen,
 
                 DrawTools.values().map { mode ->
                     options.addOption(mode.toString(), mode.drawTool.name).also { option ->
-                        if (context.drawTool == mode.drawTool) {
+                        if (context.currentTool == mode.drawTool) {
                             option.isSelected = true
                         }
                     }
@@ -33,7 +33,7 @@ class ModeSelectorDialog(screen: Screen,
 
                 options.onSelection { selected ->
                     // TODO: use service
-                    context.drawTool = DrawTools.valueOf(selected.key).drawTool
+                    context.currentTool = DrawTools.valueOf(selected.key).drawTool
                 }
 
                 panel.addComponent(options)
