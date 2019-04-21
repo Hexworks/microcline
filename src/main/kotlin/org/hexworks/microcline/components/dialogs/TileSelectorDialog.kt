@@ -67,8 +67,8 @@ class TileSelectorDialog(screen: Screen,
                         .withComponentRenderer(NoOpComponentRenderer())
                         .build().also { palettePanel ->
                             // Select current colors.
-                            selectColor(palettePanel, colorPosition(context.tile.foregroundColor), MouseButton.LEFT.id)
-                            selectColor(palettePanel, colorPosition(context.tile.backgroundColor), MouseButton.RIGHT.id)
+                            selectColor(palettePanel, colorPosition(context.selectedTile.foregroundColor), MouseButton.LEFT.id)
+                            selectColor(palettePanel, colorPosition(context.selectedTile.backgroundColor), MouseButton.RIGHT.id)
 
                             palettePanel.onMouseEvent(MOUSE_PRESSED, TARGET) { action ->
                                 // Center mouse button is ignored.
@@ -115,10 +115,10 @@ class TileSelectorDialog(screen: Screen,
         when (button) {
             MouseButton.LEFT.id -> {
                 fg = color
-                bg = context.tile.backgroundColor
+                bg = context.selectedTile.backgroundColor
             }
             else -> {
-                fg = context.tile.foregroundColor
+                fg = context.selectedTile.foregroundColor
                 bg = color
             }
         }
@@ -150,7 +150,7 @@ class TileSelectorDialog(screen: Screen,
         }
 
         // Update context.
-        context.tile = context.tile.withBackgroundColor(bg).withForegroundColor(fg)
+        context.selectedTile = context.selectedTile.withBackgroundColor(bg).withForegroundColor(fg)
     }
 
     private fun colorPosition(color: TileColor): Position {
@@ -159,7 +159,7 @@ class TileSelectorDialog(screen: Screen,
     }
 
     private fun glyphPosition(): Position {
-        val idx = CP437Utils.fetchCP437IndexForChar(context.tile.asCharacterTile().get().character)
+        val idx = CP437Utils.fetchCP437IndexForChar(context.selectedTile.asCharacterTile().get().character)
         return Positions.create(idx % 16, idx / 16).plus(Position.offset1x1())
     }
 
@@ -181,9 +181,9 @@ class TileSelectorDialog(screen: Screen,
         panel.setTileAt(position, tile.withBackgroundColor(ANSITileColor.CYAN).withForegroundColor(ANSITileColor.RED))
 
         // Update context.
-        val fg = context.tile.foregroundColor
-        val bg = context.tile.backgroundColor
-        context.tile = tile.withBackgroundColor(bg).withForegroundColor(fg)
+        val fg = context.selectedTile.foregroundColor
+        val bg = context.selectedTile.backgroundColor
+        context.selectedTile = tile.withBackgroundColor(bg).withForegroundColor(fg)
     }
 
 }

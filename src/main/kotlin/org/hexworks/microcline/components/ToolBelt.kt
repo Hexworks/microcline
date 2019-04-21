@@ -1,5 +1,6 @@
 package org.hexworks.microcline.components
 
+import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.components.dialogs.FileSelectorDialog
 import org.hexworks.microcline.components.dialogs.LayerSelectorDialog
@@ -11,7 +12,6 @@ import org.hexworks.microcline.data.events.DrawModeChanged
 import org.hexworks.microcline.data.events.FileChanged
 import org.hexworks.microcline.data.events.LayerSelected
 import org.hexworks.microcline.data.events.MousePosition
-import org.hexworks.microcline.data.events.TileChanged
 import org.hexworks.microcline.drawtools.DrawTool
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Modifiers
@@ -101,14 +101,14 @@ class ToolBelt(screen: Screen,
         panel.addComponent(yPosTool.wrapper)
 
         // Init selectors.
-        updateTile(context.tile)
+        updateSelectedTile(context.selectedTile)
         updateMode(context.drawTool)
         updateLayer(context.layerRegistry.selected.get().labelProperty.value)
         updateFile(Config.NONAME_FILE)
 
         // Event subscriptions.
-        Zircon.eventBus.subscribe<TileChanged> {
-            updateTile(it.tile)
+        context.selectedTileProperty.onChange {
+            updateSelectedTile(it.newValue)
         }
         Zircon.eventBus.subscribe<DrawModeChanged> {
             updateMode(it.mode)
@@ -124,7 +124,7 @@ class ToolBelt(screen: Screen,
         }
     }
 
-    private fun updateTile(tile: Tile) {
+    private fun updateSelectedTile(tile: Tile) {
         tilePanel.setTileAt(Position.zero(), tile.withModifiers(Modifiers.border()))
     }
 

@@ -55,7 +55,7 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
         // Select tile on mouse position.
         selectionLayer.clear()
         selectionLayer.draw(
-                context.tile.withModifiers(Modifiers.border()),
+                context.selectedTile.withModifiers(Modifiers.border()),
                 position)
 
         Zircon.eventBus.publish(MousePosition(position.x, position.y))
@@ -83,7 +83,7 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
         // Draw the initial tile (if drawTool draws is at all) with border.
         // TODO: rename this to `currentTool`
         context.drawTool.draw(
-                DrawCommand(context.tile.withModifiers(Modifiers.border()), position, position, false),
+                DrawCommand(context.selectedTile.withModifiers(Modifiers.border()), position, position, false),
                 maybeTempLayer.get())
         return Processed
     }
@@ -104,7 +104,7 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
                 // Draw the temporary thing.
                 tempLayer.clear()
                 context.drawTool.draw(
-                        DrawCommand(context.tile, startPosition, position, false),
+                        DrawCommand(context.selectedTile, startPosition, position, false),
                         tempLayer)
 
                 // Draw border around the tile on mouse position.
@@ -129,12 +129,12 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
                 // Select tile on mouse position.
                 selectionLayer.clear()
                 selectionLayer.draw(
-                        context.tile.withModifiers(Modifiers.border()),
+                        context.selectedTile.withModifiers(Modifiers.border()),
                         position)
 
                 // Draw the thing onto the real layer.
                 context.drawTool.draw(
-                        DrawCommand(context.tile, startPosition, position, true),
+                        DrawCommand(context.selectedTile, startPosition, position, true),
                         context.layerRegistry.selected.get().layer)
 
                 // Cleanup

@@ -1,5 +1,6 @@
 package org.hexworks.microcline.context
 
+import org.hexworks.cobalt.databinding.api.createPropertyFrom
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
@@ -9,7 +10,6 @@ import org.hexworks.microcline.data.Palettes
 import org.hexworks.microcline.data.events.DrawModeChanged
 import org.hexworks.microcline.data.events.FileChanged
 import org.hexworks.microcline.data.events.LayerOrderChanged
-import org.hexworks.microcline.data.events.TileChanged
 import org.hexworks.microcline.drawtools.DrawTool
 import org.hexworks.microcline.layers.LayerRegistry
 import org.hexworks.zircon.api.Blocks
@@ -63,18 +63,16 @@ class EditorContext {
             }
 
     /**
-     * Stores the currently selected [Tile] (glyph + colors). When changed it sends a [TileChanged] event.
+     * Property for the currently selected [Tile] (glyph + colors).
      */
-    var tile: Tile = Tiles
+    val selectedTileProperty = createPropertyFrom(Tiles
             .newBuilder()
             .withCharacter(DEFAULT_GLYPH)
             .withBackgroundColor(Palettes.XTERM_256.colors[0]) // ANSI Black
             .withForegroundColor(Palettes.XTERM_256.colors[7]) // ANSI White
-            .build()
-        set(value) {
-            field = value
-            Zircon.eventBus.publish(TileChanged(value))
-        }
+            .build())
+
+    var selectedTile: Tile by selectedTileProperty.asDelegate()
 
     /**
      * Stores the currently selected [DrawTool]. When changed it sends a [DrawModeChanged] event.
