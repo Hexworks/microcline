@@ -50,9 +50,9 @@ class FileSelectorDialog(screen: Screen) : BaseDialog(screen) {
                             onComponentEvent(ACTIVATED) {
                                 println("new: reset state")
                                 // TODO: issue: modal opened from a modal is not displayed at all, breaks everything
-//                                val modal = YesNoDialog(screen).apply {
+//                                val modal = ConfirmationDialog(screen).apply {
 //                                    root.onClosed {
-//                                        if (it == YesModalResult) {
+//                                        if (it == Yes) {
 //                                            // DO
 //                                        } else {
 //                                            // DON'T DO
