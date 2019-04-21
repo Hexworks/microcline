@@ -1,7 +1,7 @@
 package org.hexworks.microcline.components.dialogs
 
 import org.hexworks.microcline.data.MouseButton
-import org.hexworks.microcline.data.Palette
+import org.hexworks.microcline.data.Palettes
 import org.hexworks.microcline.extensions.onMouseEvent
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
@@ -97,7 +97,7 @@ class TileSelectorDialog(screen: Screen) : BaseDialog(screen) {
 
     private fun selectColor(panel: Panel, position: Position, button: Int) {
         // Redraw palette.
-        Palette.forEachIndexed { index, tileColor ->
+        Palettes.XTERM_256.colors.forEachIndexed { index, tileColor ->
             panel.draw(
                     Tiles.newBuilder()
                             .withBackgroundColor(tileColor)
@@ -108,7 +108,7 @@ class TileSelectorDialog(screen: Screen) : BaseDialog(screen) {
         }
 
         // Find color and assign it to foreground or background based on the mouse button.
-        val color = Palette[((position.y - 1) * 16) + (position.x - 1)]
+        val color = Palettes.XTERM_256.colors[((position.y - 1) * 16) + (position.x - 1)]
         val bg: TileColor
         val fg: TileColor
         when (button) {
@@ -124,29 +124,26 @@ class TileSelectorDialog(screen: Screen) : BaseDialog(screen) {
 
         // Mark the selected colors.
         if (fg == bg) {
-            panel.draw(
-                    Tiles.newBuilder()
-                            .withBackgroundColor(color)
-                            .withForegroundColor(color.invert())
-                            .withCharacter('#')
-                            .build(),
+            panel.draw(Tiles.newBuilder()
+                    .withBackgroundColor(color)
+                    .withForegroundColor(color.invert())
+                    .withCharacter('#')
+                    .build(),
                     position
             )
         } else {
-            panel.draw(
-                    Tiles.newBuilder()
-                            .withBackgroundColor(bg)
-                            .withForegroundColor(bg.invert())
-                            .withCharacter('B')
-                            .build(),
+            panel.draw(Tiles.newBuilder()
+                    .withBackgroundColor(bg)
+                    .withForegroundColor(bg.invert())
+                    .withCharacter('B')
+                    .build(),
                     colorPosition(bg)
             )
-            panel.draw(
-                    Tiles.newBuilder()
-                            .withBackgroundColor(fg)
-                            .withForegroundColor(fg.invert())
-                            .withCharacter('F')
-                            .build(),
+            panel.draw(Tiles.newBuilder()
+                    .withBackgroundColor(fg)
+                    .withForegroundColor(fg.invert())
+                    .withCharacter('F')
+                    .build(),
                     colorPosition(fg)
             )
         }
@@ -156,7 +153,7 @@ class TileSelectorDialog(screen: Screen) : BaseDialog(screen) {
     }
 
     private fun colorPosition(color: TileColor): Position {
-        val idx = Palette.indexOf(color)
+        val idx = Palettes.XTERM_256.colors.indexOf(color)
         return Positions.create(idx % 16, idx / 16).plus(Position.offset1x1())
     }
 

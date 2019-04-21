@@ -7,11 +7,11 @@ import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.application.AppConfig
 import org.hexworks.zircon.api.data.Size
 
-
+// TODO: create a data class for this so we can externalize it
 object Config {
 
-    val TILESET = CP437TilesetResources.rexPaint14x14()
-    val THEME = ColorThemes.ancestry()
+    val TILESET = CP437TilesetResources.rexPaint16x16()
+    val THEME = ColorThemes.solarizedLightOrange()
     // 80x45 -> 16:9 ratio
     const val DRAW_AREA_WIDTH: Int = 80
     const val DRAW_AREA_HEIGHT: Int = 45

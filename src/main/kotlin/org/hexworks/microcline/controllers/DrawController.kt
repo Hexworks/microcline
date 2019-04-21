@@ -78,8 +78,8 @@ class DrawController : MouseEventHandler {
             State.drawing.pushOverlayAt(maybeTempLayer.get(), 1)
         }
 
-        // Draw the initial tile (if drawer draws is at all) with border.
-        State.drawer.draw(
+        // Draw the initial tile (if drawTool draws is at all) with border.
+        State.drawTool.draw(
                 DrawCommand(State.tile.withModifiers(Modifiers.border()), position, position, false),
                 maybeTempLayer.get())
         return Processed
@@ -100,12 +100,12 @@ class DrawController : MouseEventHandler {
 
                 // Draw the temporary thing.
                 tempLayer.clear()
-                State.drawer.draw(
+                State.drawTool.draw(
                         DrawCommand(State.tile, startPosition, position, false),
                         tempLayer)
 
                 // Draw border around the tile on mouse position.
-                // This can be empty (depends on the drawer), so get the tile on position first.
+                // This can be empty (depends on the drawTool), so get the tile on position first.
                 tempLayer.draw(
                         tempLayer.getTileAt(position).get().withModifiers(Modifiers.border()),
                         position)
@@ -130,7 +130,7 @@ class DrawController : MouseEventHandler {
                         position)
 
                 // Draw the thing onto the real layer.
-                State.drawer.draw(
+                State.drawTool.draw(
                         DrawCommand(State.tile, startPosition, position, true),
                         State.layerRegistry.selected.get().layer)
 

@@ -3,14 +3,14 @@ package org.hexworks.microcline.state
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
-import org.hexworks.microcline.data.Drawers
+import org.hexworks.microcline.data.DrawTools
 import org.hexworks.microcline.data.DrawingLayer
-import org.hexworks.microcline.data.Palette
+import org.hexworks.microcline.data.Palettes
 import org.hexworks.microcline.data.events.DrawModeChanged
 import org.hexworks.microcline.data.events.FileChanged
 import org.hexworks.microcline.data.events.LayerOrderChanged
 import org.hexworks.microcline.data.events.TileChanged
-import org.hexworks.microcline.drawers.Drawer
+import org.hexworks.microcline.drawtools.DrawTool
 import org.hexworks.microcline.layers.LayerRegistry
 import org.hexworks.zircon.api.Blocks
 import org.hexworks.zircon.api.Tiles
@@ -74,8 +74,8 @@ object State {
     var tile: Tile = Tiles
             .newBuilder()
             .withCharacter(DEFAULT_GLYPH)
-            .withBackgroundColor(Palette[0]) // ANSI Black
-            .withForegroundColor(Palette[7]) // ANSI White
+            .withBackgroundColor(Palettes.XTERM_256.colors[0]) // ANSI Black
+            .withForegroundColor(Palettes.XTERM_256.colors[7]) // ANSI White
             .build()
         set(value) {
             field = value
@@ -83,9 +83,9 @@ object State {
         }
 
     /**
-     * Stores the currently selected [Drawers]. When changed it sends a [DrawModeChanged] event.
+     * Stores the currently selected [DrawTools]. When changed it sends a [DrawModeChanged] event.
      */
-    var drawer: Drawer = Drawers.FREEHAND.drawer
+    var drawTool: DrawTool = DrawTools.FREEHAND.drawTool
         set(value) {
             field = value
             Zircon.eventBus.publish(DrawModeChanged(value))

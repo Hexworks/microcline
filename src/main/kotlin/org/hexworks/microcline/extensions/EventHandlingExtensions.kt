@@ -6,9 +6,23 @@ import org.hexworks.zircon.api.extensions.onKeyboardEvent
 import org.hexworks.zircon.api.extensions.onMouseEvent
 import org.hexworks.zircon.api.uievent.*
 
+// TODO: move these to Zircon
+
+/**
+ * Adds a handler for all types of [MouseEvent]s.
+ */
 fun UIEventSource.onAnyMouseEvent(handler: MouseEventHandler) {
     MouseEventType.values().forEach {
         onMouseEvent(it, handler)
+    }
+}
+
+/**
+ * Adds a handler for all types of [KeyboardEvent]s.
+ */
+fun UIEventSource.onAnyKeyboardEvent(handler: KeyboardEventHandler) {
+    KeyboardEventType.values().forEach {
+        onKeyboardEvent(it, handler)
     }
 }
 

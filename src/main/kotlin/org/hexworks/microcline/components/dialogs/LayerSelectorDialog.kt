@@ -1,6 +1,7 @@
 package org.hexworks.microcline.components.dialogs
 
 import org.hexworks.cobalt.events.api.subscribe
+import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.events.LayerOrderChanged
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.ColorThemes
@@ -58,7 +59,7 @@ class LayerSelectorDialog(screen: Screen) : BaseDialog(screen) {
                     })
         }
         // TODO: this must be a bug in Zircon.
-        container.applyColorTheme(ColorThemes.amigaOs())
+        container.applyColorTheme(Config.THEME)
     }
 
 }

@@ -6,8 +6,12 @@ import org.hexworks.microcline.components.dialogs.LayerSelectorDialog
 import org.hexworks.microcline.components.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.components.dialogs.TileSelectorDialog
 import org.hexworks.microcline.config.Config
-import org.hexworks.microcline.data.events.*
-import org.hexworks.microcline.drawers.Drawer
+import org.hexworks.microcline.data.events.DrawModeChanged
+import org.hexworks.microcline.data.events.FileChanged
+import org.hexworks.microcline.data.events.LayerSelected
+import org.hexworks.microcline.data.events.MousePosition
+import org.hexworks.microcline.data.events.TileChanged
+import org.hexworks.microcline.drawtools.DrawTool
 import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Modifiers
@@ -26,8 +30,7 @@ class ToolBelt(screen: Screen,
                        .wrapWithBox(true)
                        .withSize(Size.create(Config.WINDOW_WIDTH, Config.TOOLBELT_HEIGHT + 2 * Config.BORDER_SIZE))
                        .withPosition(position)
-                       .build()
-) {
+                       .build()) {
 
     // Selected tile must be wrapped into a NoOpComponentRenderer() panel to be displayed correctly.
     private val tilePanel = Components.panel()
@@ -98,7 +101,7 @@ class ToolBelt(screen: Screen,
 
         // Init selectors.
         updateTile(State.tile)
-        updateMode(State.drawer)
+        updateMode(State.drawTool)
         updateLayer(State.layerRegistry.selected.get().labelProperty.value)
         updateFile(Config.NONAME_FILE)
 
@@ -124,8 +127,8 @@ class ToolBelt(screen: Screen,
         tilePanel.setTileAt(Position.zero(), tile.withModifiers(Modifiers.border()))
     }
 
-    private fun updateMode(mode: Drawer) {
-        modeText.text = mode.name()
+    private fun updateMode(mode: DrawTool) {
+        modeText.text = mode.name
     }
 
     private fun updateLayer(layer: String) {

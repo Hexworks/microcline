@@ -1,17 +1,17 @@
-package org.hexworks.microcline.drawers
+package org.hexworks.microcline.drawtools
 
 import org.hexworks.microcline.data.DrawCommand
 import org.hexworks.zircon.api.graphics.DrawSurface
 import org.hexworks.zircon.api.shape.LineFactory
 
 
-class LineDrawer : Drawer {
+class LineDrawTool : DrawTool {
 
-    override fun name(): String = "Line"
+    override val name = "Line"
 
     override fun draw(command: DrawCommand, surface: DrawSurface) {
-        LineFactory.buildLine(command.startPosition, command.endPosition).forEach {
-            surface.draw(command.tile, it)
+        LineFactory.buildLine(command.startPosition, command.endPosition).forEach { pos ->
+            surface.draw(command.tile, pos)
         }
     }
 

@@ -1,4 +1,4 @@
-package org.hexworks.microcline.drawers
+package org.hexworks.microcline.drawtools
 
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.microcline.data.DrawCommand
@@ -7,18 +7,18 @@ import org.hexworks.zircon.api.graphics.DrawSurface
 import org.hexworks.zircon.api.shape.LineFactory
 
 
-class FreeHandDrawer : Drawer {
+class FreeHandDrawTool : DrawTool {
 
     private var maybePreviousEnd = Maybe.empty<Position>()
     private val positions = mutableSetOf<Position>()
 
-    override fun name(): String = "Free hand"
+    override val name = "Free hand"
 
     override fun draw(command: DrawCommand, surface: DrawSurface) {
         val startPosition = if (maybePreviousEnd.isPresent) maybePreviousEnd.get() else command.startPosition
 
-        LineFactory.buildLine(startPosition, command.endPosition).forEach {
-            positions.add(it)
+        LineFactory.buildLine(startPosition, command.endPosition).forEach { pos ->
+            positions.add(pos)
         }
         positions.forEach {
             surface.draw(command.tile, it)

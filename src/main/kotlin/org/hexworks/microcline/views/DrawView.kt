@@ -2,6 +2,7 @@ package org.hexworks.microcline.views
 
 import org.hexworks.microcline.components.DrawArea
 import org.hexworks.microcline.components.ToolBelt
+import org.hexworks.microcline.config.Config
 import org.hexworks.zircon.api.ColorThemes
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.mvc.base.BaseView
@@ -9,7 +10,7 @@ import org.hexworks.zircon.api.mvc.base.BaseView
 
 class DrawView : BaseView() {
 
-    override val theme = ColorThemes.amigaOs()
+    override val theme = Config.THEME
 
     override fun onDock() {
         val drawArea = DrawArea(Positions.defaultPosition())

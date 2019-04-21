@@ -1,7 +1,6 @@
 package org.hexworks.microcline.data.events
 
 import org.hexworks.cobalt.events.api.Event
-import org.hexworks.microcline.drawers.Drawer
+import org.hexworks.microcline.drawtools.DrawTool
 
-
-data class DrawModeChanged(val mode: Drawer) : Event
+data class DrawModeChanged(val mode: DrawTool) : Event
