@@ -21,9 +21,9 @@ abstract class BaseDialog(private val screen: Screen,
                 .withParentSize(screen.size)
                 .withDarkenPercent(darkenPercent)
                 .withCenteredDialog(true)
-                .build().also {
+                .build().also { modal ->
                     if (withClose) {
-                        content.addFragment(OKButtonFragment(it, content))
+                        content.addFragment(OKButtonFragment(modal, content))
                     }
                     content.applyColorTheme(Config.THEME)
                 }
