@@ -49,6 +49,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     compile "org.slf4j:slf4j-api:$slf4j_version"
+    compile "ch.qos.logback:logback-classic:$logback_version"
 
     compile "org.hexworks.zircon:zircon.core-jvm:$zircon_version"
     compile "org.hexworks.zircon:zircon.jvm.swing:$zircon_version"
