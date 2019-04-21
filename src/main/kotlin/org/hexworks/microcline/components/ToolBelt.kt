@@ -12,7 +12,6 @@ import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.events.FileChanged
 import org.hexworks.microcline.data.events.LayerSelected
 import org.hexworks.microcline.data.events.MousePosition
-import org.hexworks.microcline.drawtools.DrawTool
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Modifiers
 import org.hexworks.zircon.api.component.Panel
@@ -21,7 +20,6 @@ import org.hexworks.zircon.api.data.Size
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.internal.Zircon
-import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
 // TODO: use services
 // TODO: make this a fragment
@@ -34,11 +32,12 @@ class ToolBelt(screen: Screen,
                        .withPosition(position)
                        .build()) {
 
-    // Selected tile must be wrapped into a NoOpComponentRenderer() panel to be displayed correctly.
-    private val tilePanel = Components.panel()
-            .withSize(Size.one())
-            .withComponentRenderer(NoOpComponentRenderer())
-            .build()
+    private val selectedTileIcon = Components.icon()
+            .withIcon(context.selectedTile)
+            .withTileset(screen.currentTileset())
+            .build().apply {
+                iconProperty.bind(context.selectedTileProperty)
+            }
 
     private val modeText = Components.button()
             .withSize(Size.create(9, 1))
@@ -66,7 +65,7 @@ class ToolBelt(screen: Screen,
         val tileTool = Tool(
                 Position.zero(),
                 "Tile",
-                tilePanel,
+                selectedTileIcon,
                 { screen.openModal(TileSelectorDialog(screen, context)) }
         )
         val modeTool = Tool(
@@ -108,14 +107,10 @@ class ToolBelt(screen: Screen,
         panel.addComponent(yPosTool.wrapper)
 
         // Init selectors.
-        updateSelectedTile(context.selectedTile)
         updateLayer(context.layerRegistry.selected.get().labelProperty.value)
         updateFile(Config.NONAME_FILE)
 
         // Event subscriptions.
-        context.selectedTileProperty.onChange {
-            updateSelectedTile(it.newValue)
-        }
         Zircon.eventBus.subscribe<LayerSelected> {
             updateLayer(it.layer.labelProperty.value)
         }
@@ -125,10 +120,6 @@ class ToolBelt(screen: Screen,
         Zircon.eventBus.subscribe<MousePosition> {
             updatePos(it.x, it.y)
         }
-    }
-
-    private fun updateSelectedTile(tile: Tile) {
-        tilePanel.setTileAt(Position.zero(), tile.withModifiers(Modifiers.border()))
     }
 
     private fun updateLayer(layer: String) {

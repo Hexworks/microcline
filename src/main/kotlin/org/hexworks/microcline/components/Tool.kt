@@ -13,7 +13,6 @@ import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
 import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
-
 class Tool(position: Position,
            labelText: String,
            component: Component,
@@ -21,8 +20,7 @@ class Tool(position: Position,
            label: Label = Components.label()
                    .withPosition(Position.zero())
                    .withText("$labelText: ")
-                   .build()
-) {
+                   .build()) {
 
     val wrapper: Panel = Components.panel()
             .withPosition(position)
