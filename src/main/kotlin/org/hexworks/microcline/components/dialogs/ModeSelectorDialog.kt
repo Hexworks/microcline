@@ -9,9 +9,9 @@ import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.screen.Screen
 
 
-class ModeSelectorDialog(screen: Screen) : Dialog(screen) {
+class ModeSelectorDialog(screen: Screen) : BaseDialog(screen) {
 
-    override val container = Components.panel()
+    override val content = Components.panel()
             .withTitle("Drawer Mode")
             .withSize(17, Drawers.values().size + 5)
             .withBoxType(BoxType.DOUBLE)

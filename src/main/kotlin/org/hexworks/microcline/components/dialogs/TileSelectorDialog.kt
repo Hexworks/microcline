@@ -21,9 +21,9 @@ import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 import org.hexworks.zircon.internal.util.CP437Utils
 
 
-class TileSelectorDialog(screen: Screen) : Dialog(screen) {
+class TileSelectorDialog(screen: Screen) : BaseDialog(screen) {
 
-    override val container = Components.panel()
+    override val content = Components.panel()
             .withTitle("Tile")
             .withSize(40, 23)
             .withBoxType(BoxType.DOUBLE)

@@ -16,9 +16,9 @@ import org.hexworks.zircon.api.uievent.UIEventPhase
 import javax.swing.JFileChooser
 
 
-class FileSelectorDialog(screen: Screen) : Dialog(screen) {
+class FileSelectorDialog(screen: Screen) : BaseDialog(screen) {
 
-    override val container = Components.panel()
+    override val content = Components.panel()
             .withTitle("File")
             .withSize(34, 12)
             .withBoxType(BoxType.DOUBLE)

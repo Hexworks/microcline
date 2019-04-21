@@ -16,7 +16,7 @@ import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.internal.Zircon
 
 
-class LayerSelectorDialog(screen: Screen) : Dialog(screen) {
+class LayerSelectorDialog(screen: Screen) : BaseDialog(screen) {
 
     private val layerList = Components.panel()
             .withPosition(Position.create(0, 1))
@@ -32,7 +32,7 @@ class LayerSelectorDialog(screen: Screen) : Dialog(screen) {
                 }
             }
 
-    override val container = Components.panel()
+    override val content = Components.panel()
             .withTitle("Layers")
             .withSize(24, 15)
             .withBoxType(BoxType.DOUBLE)
