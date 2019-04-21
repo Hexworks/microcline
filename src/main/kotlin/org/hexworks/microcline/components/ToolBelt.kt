@@ -1,7 +1,7 @@
 package org.hexworks.microcline.components
 
 import org.hexworks.cobalt.databinding.api.extensions.bind
-import org.hexworks.cobalt.databinding.api.extensions.onChange
+import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.components.dialogs.FileSelectorDialog
 import org.hexworks.microcline.components.dialogs.LayerSelectorDialog
@@ -9,16 +9,17 @@ import org.hexworks.microcline.components.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.components.dialogs.TileSelectorDialog
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
-import org.hexworks.microcline.data.events.FileChanged
-import org.hexworks.microcline.data.events.LayerSelected
-import org.hexworks.microcline.data.events.MousePosition
+import org.hexworks.microcline.events.LayerSelected
+import org.hexworks.microcline.extensions.onMouseEvent
 import org.hexworks.zircon.api.Components
-import org.hexworks.zircon.api.Modifiers
+import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.component.Panel
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Size
-import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.screen.Screen
+import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_MOVED
+import org.hexworks.zircon.api.uievent.Processed
+import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
 import org.hexworks.zircon.internal.Zircon
 
 // TODO: use services
@@ -48,91 +49,90 @@ class ToolBelt(screen: Screen,
                     it.name
                 }
             }
+
     private val layerText = Components.textArea()
             .withSize(Size.create(12, 1))
             .build().apply { disable() }
-    private val fileText = Components.textArea()
+
+    private val fileText = Components.button()
             .withSize(Size.create(18, 1))
-            .build().apply { disable() }
-    private val xPosText = Components.textArea()
+            .withText(Config.NONAME_FILE)
+            .wrapSides(false)
+            .build().apply {
+                textProperty.bind(context.currentFileProperty) {
+                    it.map { file -> file.name }.orElse(Config.NONAME_FILE)
+                }
+            }
+
+    private val xPosText = Components.label()
             .withSize(Size.create(2, 1))
-            .build().apply { disable() }
-    private val yPosText = Components.textArea()
+            .withText("0")
+            .build()
+
+    private val yPosText = Components.label()
             .withSize(Size.create(2, 1))
-            .build().apply { disable() }
+            .withText("0")
+            .build()
 
     init {
         val tileTool = Tool(
-                Position.zero(),
-                "Tile",
-                selectedTileIcon,
-                { screen.openModal(TileSelectorDialog(screen, context)) }
-        )
-        val modeTool = Tool(
-                Position.topRightOf(tileTool.wrapper),
-                "Mode",
-                modeText,
-                { screen.openModal(ModeSelectorDialog(screen, context)) }
-        )
-        val layerTool = Tool(
-                Position.topRightOf(modeTool.wrapper),
-                "Layer",
-                layerText,
-                { screen.openModal(LayerSelectorDialog(screen, context)) }
-        )
-        val fileTool = Tool(
-                Position.topRightOf(layerTool.wrapper),
-                "File",
-                fileText,
-                { screen.openModal(FileSelectorDialog(screen, context)) }
-        )
-        val xPosTool = Tool(
-                Position.topRightOf(fileTool.wrapper),
-                "X",
-                xPosText,
-                { }
-        )
-        val yPosTool = Tool(
-                Position.topRightOf(xPosTool.wrapper),
-                "Y",
-                yPosText,
-                { }
-        )
+                position = Position.zero(),
+                labelText = "Tile",
+                component = selectedTileIcon,
+                clickHandler = { screen.openModal(TileSelectorDialog(screen, context)) })
 
-        panel.addComponent(tileTool.wrapper)
-        panel.addComponent(modeTool.wrapper)
-        panel.addComponent(layerTool.wrapper)
-        panel.addComponent(fileTool.wrapper)
-        panel.addComponent(xPosTool.wrapper)
-        panel.addComponent(yPosTool.wrapper)
+        val modeTool = Tool(
+                position = Position.topRightOf(tileTool.root),
+                labelText = "Mode",
+                component = modeText,
+                clickHandler = { screen.openModal(ModeSelectorDialog(screen, context)) })
+
+        val layerTool = Tool(
+                position = Position.topRightOf(modeTool.root),
+                labelText = "Layer",
+                component = layerText,
+                clickHandler = { screen.openModal(LayerSelectorDialog(screen, context)) })
+
+        val fileTool = Tool(
+                position = Position.topRightOf(layerTool.root),
+                labelText = "File",
+                component = fileText,
+                clickHandler = { screen.openModal(FileSelectorDialog(screen, context)) })
+
+        val xPosTool = Tool(
+                position = Position.topRightOf(fileTool.root),
+                labelText = "X",
+                component = xPosText)
+
+        val yPosTool = Tool(
+                position = Position.topRightOf(xPosTool.root),
+                labelText = "Y",
+                component = yPosText)
+
+        panel.addFragment(tileTool)
+        panel.addFragment(modeTool)
+        panel.addFragment(layerTool)
+        panel.addFragment(fileTool)
+        panel.addFragment(xPosTool)
+        panel.addFragment(yPosTool)
 
         // Init selectors.
         updateLayer(context.layerRegistry.selected.get().labelProperty.value)
-        updateFile(Config.NONAME_FILE)
 
         // Event subscriptions.
         Zircon.eventBus.subscribe<LayerSelected> {
             updateLayer(it.layer.labelProperty.value)
         }
-        Zircon.eventBus.subscribe<FileChanged> {
-            updateFile(it.file)
-        }
-        Zircon.eventBus.subscribe<MousePosition> {
-            updatePos(it.x, it.y)
+        screen.onMouseEvent(MOUSE_MOVED, TARGET) {
+            val pos = it.position - Positions.offset1x1()
+            xPosText.text = pos.x.toString()
+            yPosText.text = pos.y.toString()
+            Processed
         }
     }
 
     private fun updateLayer(layer: String) {
         layerText.text = layer
-    }
-
-    private fun updateFile(file: String) {
-        fileText.text = file
-    }
-
-    private fun updatePos(x: Int, y: Int) {
-        xPosText.text = x.toString()
-        yPosText.text = y.toString()
     }
 
 }

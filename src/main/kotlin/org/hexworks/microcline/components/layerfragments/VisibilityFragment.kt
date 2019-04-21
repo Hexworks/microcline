@@ -2,7 +2,7 @@ package org.hexworks.microcline.components.layerfragments
 
 import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
-import org.hexworks.microcline.data.events.LayerOrderChanged
+import org.hexworks.microcline.events.LayerOrderChanged
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position

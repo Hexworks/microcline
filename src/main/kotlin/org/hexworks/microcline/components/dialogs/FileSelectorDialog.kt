@@ -1,11 +1,13 @@
 package org.hexworks.microcline.components.dialogs
 
 import org.hexworks.cobalt.datatypes.Maybe
+import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.extensions.onMouseEvent
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.api.extensions.onClosed
 import org.hexworks.zircon.api.extensions.onComponentEvent
 import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.screen.Screen
@@ -29,14 +31,14 @@ class FileSelectorDialog(screen: Screen,
                 val filePath = Components.textArea()
                         .withPosition(Position.offset1x1())
                         .withSize(30, 5)
-                        .withText(if (!context.file.isEmpty()) context.file.get().absolutePath else Config.NONAME_FILE)
+                        .withText(context.currentFile.map { it.absolutePath }.orElse(Config.NONAME_FILE))
                         .build().apply {
                             disable()
                             onMouseEvent(MOUSE_RELEASED, UIEventPhase.TARGET) {
                                 JFileChooser().also { fc ->
                                     if (fc.showDialog(null, "Select") == JFileChooser.APPROVE_OPTION) {
                                         text = fc.selectedFile.absolutePath
-                                        context.file = Maybe.of(fc.selectedFile)
+                                        context.currentFile = Maybe.of(fc.selectedFile)
                                     }
                                 }
                                 Processed
@@ -51,17 +53,15 @@ class FileSelectorDialog(screen: Screen,
                         .build().apply {
                             onComponentEvent(ACTIVATED) {
                                 println("new: reset state")
-                                // TODO: issue: modal opened from a modal is not displayed at all, breaks everything
-//                                val modal = ConfirmationDialog(screen).apply {
-//                                    root.onClosed {
-//                                        if (it == Yes) {
-//                                            // DO
-//                                        } else {
-//                                            // DON'T DO
-//                                        }
-//                                    }
-//                                }
-//                                screen.openModal(modal)
+                                val modal = ConfirmationDialog(screen).apply {
+                                    root.onClosed {
+                                        when (it) {
+                                            ConfirmationDialog.Yes -> TODO()
+                                            ConfirmationDialog.No -> TODO()
+                                        }
+                                    }
+                                }
+                                screen.openModal(modal)
                                 context.reset()
                                 filePath.text = Config.NONAME_FILE
                                 Processed

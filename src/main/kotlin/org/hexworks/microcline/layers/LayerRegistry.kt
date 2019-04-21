@@ -5,10 +5,10 @@ import org.hexworks.cobalt.datatypes.extensions.ifPresent
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.components.LayerHandler
 import org.hexworks.microcline.context.EditorContext
-import org.hexworks.microcline.data.events.LayerMovedDown
-import org.hexworks.microcline.data.events.LayerMovedUp
-import org.hexworks.microcline.data.events.LayerOrderChanged
-import org.hexworks.microcline.data.events.LayerSelected
+import org.hexworks.microcline.events.LayerMovedDown
+import org.hexworks.microcline.events.LayerMovedUp
+import org.hexworks.microcline.events.LayerOrderChanged
+import org.hexworks.microcline.events.LayerSelected
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.internal.Zircon
 import java.util.*

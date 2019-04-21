@@ -7,7 +7,6 @@ import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.DrawCommand
 import org.hexworks.microcline.data.DrawingLayer
-import org.hexworks.microcline.data.events.MousePosition
 import org.hexworks.zircon.api.Layers
 import org.hexworks.zircon.api.Modifiers
 import org.hexworks.zircon.api.data.Position
@@ -58,7 +57,6 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
                 context.selectedTile.withModifiers(Modifiers.border()),
                 position)
 
-        Zircon.eventBus.publish(MousePosition(position.x, position.y))
         return Processed
     }
 
@@ -96,7 +94,6 @@ class DrawController(private val context: EditorContext) : MouseEventHandler {
         maybeStartPosition.ifPresent { startPosition ->
             maybeTempLayer.ifPresent { tempLayer ->
                 val position = action.position - Position.offset1x1()
-                Zircon.eventBus.publish(MousePosition(position.x, position.y))
 
                 // Clear selected tile.
                 selectionLayer.clear()

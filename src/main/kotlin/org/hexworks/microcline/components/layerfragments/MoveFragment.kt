@@ -1,7 +1,7 @@
 package org.hexworks.microcline.components.layerfragments
 
-import org.hexworks.microcline.data.events.LayerMovedDown
-import org.hexworks.microcline.data.events.LayerMovedUp
+import org.hexworks.microcline.events.LayerMovedDown
+import org.hexworks.microcline.events.LayerMovedUp
 import org.hexworks.microcline.layers.Layer
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment

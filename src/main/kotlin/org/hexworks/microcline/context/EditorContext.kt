@@ -7,8 +7,7 @@ import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.data.DrawTools
 import org.hexworks.microcline.data.DrawingLayer
 import org.hexworks.microcline.data.Palettes
-import org.hexworks.microcline.data.events.FileChanged
-import org.hexworks.microcline.data.events.LayerOrderChanged
+import org.hexworks.microcline.events.LayerOrderChanged
 import org.hexworks.microcline.drawtools.DrawTool
 import org.hexworks.microcline.layers.LayerRegistry
 import org.hexworks.zircon.api.Blocks
@@ -70,7 +69,6 @@ class EditorContext {
             .withBackgroundColor(Palettes.XTERM_256.colors[0]) // ANSI Black
             .withForegroundColor(Palettes.XTERM_256.colors[7]) // ANSI White
             .build())
-
     var selectedTile: Tile by selectedTileProperty.asDelegate()
 
     /**
@@ -79,14 +77,12 @@ class EditorContext {
     val currentToolProperty = createPropertyFrom(DrawTools.FREEHAND.drawTool)
     var currentTool: DrawTool by currentToolProperty.asDelegate()
 
+
     /**
-     * Stores the currently selected file.
+     * Property for the currently selected file.
      */
-    var file = Maybe.empty<File>()
-        set(value) {
-            field = value
-            Zircon.eventBus.publish(FileChanged(if (!value.isEmpty()) value.get().name else Config.NONAME_FILE))
-        }
+    val currentFileProperty = createPropertyFrom(Maybe.empty<File>())
+    var currentFile: Maybe<File> by currentFileProperty.asDelegate()
 
     /**
      * Resets program state.
@@ -97,7 +93,7 @@ class EditorContext {
         layerRegistry = LayerRegistry(this).apply {
             create()
         }
-        file = Maybe.empty()
+        currentFile = Maybe.empty()
     }
 
     companion object {

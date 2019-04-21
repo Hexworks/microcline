@@ -3,7 +3,7 @@ package org.hexworks.microcline.components.dialogs
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
-import org.hexworks.microcline.data.events.LayerOrderChanged
+import org.hexworks.microcline.events.LayerOrderChanged
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.ComponentAlignment
 import org.hexworks.zircon.api.component.Container
