@@ -4,6 +4,7 @@ import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.ifPresent
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.components.LayerHandler
+import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.events.LayerMovedDown
 import org.hexworks.microcline.data.events.LayerMovedUp
 import org.hexworks.microcline.data.events.LayerOrderChanged
@@ -13,7 +14,7 @@ import org.hexworks.zircon.internal.Zircon
 import java.util.*
 
 
-class LayerRegistry {
+class LayerRegistry(private val context: EditorContext) {
 
     private val order = LinkedList<Layer>()
     private var lastID = 0
@@ -75,10 +76,12 @@ class LayerRegistry {
     fun layerHandlers(): List<LayerHandler> {
         val handlers = mutableListOf<LayerHandler>()
         order.forEachIndexed { i, l ->
-            handlers.add(i, LayerHandler(Position.create(0, i),
+            handlers.add(i, LayerHandler(
+                    Position.create(0, i),
                     l == order.first(),
                     l == order.last(),
-                    l)
+                    l,
+                    context)
             )
         }
         return handlers

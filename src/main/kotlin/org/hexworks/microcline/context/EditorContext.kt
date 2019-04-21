@@ -1,4 +1,4 @@
-package org.hexworks.microcline.state
+package org.hexworks.microcline.context
 
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.events.api.subscribe
@@ -18,23 +18,16 @@ import org.hexworks.zircon.api.builder.game.GameAreaBuilder
 import org.hexworks.zircon.api.data.Block
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Size3D
+import org.hexworks.zircon.api.graphics.Symbols
 import org.hexworks.zircon.internal.Zircon
-import org.hexworks.zircon.internal.util.CP437Utils
 import java.io.File
 
-
-object State {
-
-    private val DEFAULT_GLYPH = CP437Utils.convertCp437toUnicode(1) // Smiley face
-    private val EMPTY_BLOCK = Blocks.newBuilder<Tile>()
-            .withEmptyTile(Tiles.empty())
-            .withLayers(Tiles.empty())
-            .build()
+class EditorContext {
 
     /**
      * Manages [Layer] actions (create, remove, move, select, clear, etc...)
      */
-    var layerRegistry = LayerRegistry()
+    var layerRegistry = LayerRegistry(this)
 
     /**
      * Displays the visible [Layers] on the screen.
@@ -56,7 +49,8 @@ object State {
                     // - layer removed
                     // - layer position changed (moved up/down)
                     // - layer visibility changed
-                    while (popOverlayAt(DrawingLayer.PICTURE.index).isPresent) {}
+                    while (popOverlayAt(DrawingLayer.PICTURE.index).isPresent) {
+                    }
 
                     // The first layer is on the top, so pushing the overlays in reverse order.
                     layerRegistry.visibleLayers().reversed().forEach { layer ->
@@ -83,7 +77,7 @@ object State {
         }
 
     /**
-     * Stores the currently selected [DrawTools]. When changed it sends a [DrawModeChanged] event.
+     * Stores the currently selected [DrawTool]. When changed it sends a [DrawModeChanged] event.
      */
     var drawTool: DrawTool = DrawTools.FREEHAND.drawTool
         set(value) {
@@ -104,11 +98,19 @@ object State {
      * Resets program state.
      */
     fun reset() {
-        while(drawing.popOverlayAt(DrawingLayer.PICTURE.index).isPresent) {}
-        layerRegistry = LayerRegistry().apply {
+        while (drawing.popOverlayAt(DrawingLayer.PICTURE.index).isPresent) {
+        }
+        layerRegistry = LayerRegistry(this).apply {
             create()
         }
         file = Maybe.empty()
     }
 
+    companion object {
+        private const val DEFAULT_GLYPH = Symbols.FACE_WHITE
+        private val EMPTY_BLOCK = Blocks.newBuilder<Tile>()
+                .withEmptyTile(Tiles.empty())
+                .withLayers(Tiles.empty())
+                .build()
+    }
 }

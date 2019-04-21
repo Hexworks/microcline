@@ -10,7 +10,8 @@ import org.hexworks.zircon.api.extensions.onSelectionChanged
 import org.hexworks.zircon.internal.Zircon
 
 
-class VisibilityFragment(position: Position, visibilityProperty: Property<Boolean>) : Fragment {
+class VisibilityFragment(position: Position,
+                         visibilityProperty: Property<Boolean>) : Fragment {
 
     override val root = Components.toggleButton()
             .withPosition(position)

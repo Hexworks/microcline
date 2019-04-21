@@ -2,8 +2,8 @@ package org.hexworks.microcline.components.dialogs
 
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.microcline.config.Config
+import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.extensions.onMouseEvent
-import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.extensions.onComponentEvent
@@ -16,8 +16,10 @@ import org.hexworks.zircon.api.uievent.UIEventPhase
 import javax.swing.JFileChooser
 
 
-class FileSelectorDialog(screen: Screen) : BaseDialog(screen) {
+class FileSelectorDialog(screen: Screen,
+                         private val context: EditorContext) : BaseDialog(screen) {
 
+    // TODO: use service
     override val content = Components.panel()
             .withTitle("File")
             .withSize(34, 12)
@@ -27,14 +29,14 @@ class FileSelectorDialog(screen: Screen) : BaseDialog(screen) {
                 val filePath = Components.textArea()
                         .withPosition(Position.offset1x1())
                         .withSize(30, 5)
-                        .withText(if (!State.file.isEmpty()) State.file.get().absolutePath else Config.NONAME_FILE)
+                        .withText(if (!context.file.isEmpty()) context.file.get().absolutePath else Config.NONAME_FILE)
                         .build().apply {
                             disable()
                             onMouseEvent(MOUSE_RELEASED, UIEventPhase.TARGET) {
                                 JFileChooser().also { fc ->
                                     if (fc.showDialog(null, "Select") == JFileChooser.APPROVE_OPTION) {
                                         text = fc.selectedFile.absolutePath
-                                        State.file = Maybe.of(fc.selectedFile)
+                                        context.file = Maybe.of(fc.selectedFile)
                                     }
                                 }
                                 Processed
@@ -60,7 +62,7 @@ class FileSelectorDialog(screen: Screen) : BaseDialog(screen) {
 //                                    }
 //                                }
 //                                screen.openModal(modal)
-                                State.reset()
+                                context.reset()
                                 filePath.text = Config.NONAME_FILE
                                 Processed
                             }

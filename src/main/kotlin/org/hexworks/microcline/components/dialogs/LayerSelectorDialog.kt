@@ -2,9 +2,8 @@ package org.hexworks.microcline.components.dialogs
 
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
+import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.events.LayerOrderChanged
-import org.hexworks.microcline.state.State
-import org.hexworks.zircon.api.ColorThemes
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.ComponentAlignment
 import org.hexworks.zircon.api.component.Container
@@ -17,7 +16,8 @@ import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.internal.Zircon
 
 
-class LayerSelectorDialog(screen: Screen) : BaseDialog(screen) {
+class LayerSelectorDialog(screen: Screen,
+                          private val context: EditorContext) : BaseDialog(screen) {
 
     private val layerList = Components.panel()
             .withPosition(Position.create(0, 1))
@@ -42,18 +42,19 @@ class LayerSelectorDialog(screen: Screen) : BaseDialog(screen) {
                 addComponent(layerList)
             }
 
+    // TODO: do away with this and use the new concept instead
     private fun rebuildList(container: Container) {
         container.detachAllComponents()
-        State.layerRegistry.layerHandlers().forEach {
+        context.layerRegistry.layerHandlers().forEach {
             container.addComponent(it.panel)
         }
         // TODO: lift the size constraint once we can scroll lists in Zircon.
-        if (State.layerRegistry.layers().size < 10) {
+        if (context.layerRegistry.layers().size < 10) {
             container.addComponent(Components.button().withText("Add layer")
                     .withAlignmentWithin(container, ComponentAlignment.BOTTOM_CENTER)
                     .build().apply {
                         onComponentEvent(ACTIVATED) {
-                            State.layerRegistry.create()
+                            context.layerRegistry.create()
                             Processed
                         }
                     })

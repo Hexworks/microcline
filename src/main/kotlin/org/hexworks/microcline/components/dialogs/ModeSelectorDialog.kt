@@ -1,7 +1,7 @@
 package org.hexworks.microcline.components.dialogs
 
+import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.DrawTools
-import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.extensions.onSelection
@@ -9,7 +9,8 @@ import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.screen.Screen
 
 
-class ModeSelectorDialog(screen: Screen) : BaseDialog(screen) {
+class ModeSelectorDialog(screen: Screen,
+                         private val context: EditorContext) : BaseDialog(screen) {
 
     override val content = Components.panel()
             .withTitle("DrawTool Mode")
@@ -24,14 +25,15 @@ class ModeSelectorDialog(screen: Screen) : BaseDialog(screen) {
 
                 DrawTools.values().map { mode ->
                     options.addOption(mode.toString(), mode.drawTool.name).also { option ->
-                        if (State.drawTool == mode.drawTool) {
+                        if (context.drawTool == mode.drawTool) {
                             option.isSelected = true
                         }
                     }
                 }
 
                 options.onSelection { selected ->
-                    State.drawTool = DrawTools.valueOf(selected.key).drawTool
+                    // TODO: use service
+                    context.drawTool = DrawTools.valueOf(selected.key).drawTool
                 }
 
                 panel.addComponent(options)

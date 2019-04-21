@@ -4,10 +4,10 @@ import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.ifPresent
 import org.hexworks.cobalt.logging.api.LoggerFactory
 import org.hexworks.microcline.config.Config
+import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.DrawCommand
 import org.hexworks.microcline.data.DrawingLayer
 import org.hexworks.microcline.data.events.MousePosition
-import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Layers
 import org.hexworks.zircon.api.Modifiers
 import org.hexworks.zircon.api.data.Position
@@ -22,7 +22,7 @@ import org.hexworks.zircon.api.uievent.UIEventResponse
 import org.hexworks.zircon.internal.Zircon
 
 
-class DrawController : MouseEventHandler {
+class DrawController(private val context: EditorContext) : MouseEventHandler {
 
     private val logger = LoggerFactory.getLogger(DrawController::class)
 
@@ -31,7 +31,8 @@ class DrawController : MouseEventHandler {
     private var selectionLayer = Layers.newBuilder()
             .withSize(Config.DRAW_SIZE)
             .build().also {
-                State.drawing.pushOverlayAt(it, DrawingLayer.CONTROLLER.index)
+                // TODO: move this to a service
+                context.drawing.pushOverlayAt(it, DrawingLayer.CONTROLLER.index)
             }
 
     override fun handle(event: MouseEvent, phase: UIEventPhase): UIEventResponse {
@@ -54,7 +55,7 @@ class DrawController : MouseEventHandler {
         // Select tile on mouse position.
         selectionLayer.clear()
         selectionLayer.draw(
-                State.tile.withModifiers(Modifiers.border()),
+                context.tile.withModifiers(Modifiers.border()),
                 position)
 
         Zircon.eventBus.publish(MousePosition(position.x, position.y))
@@ -75,12 +76,14 @@ class DrawController : MouseEventHandler {
                     Layers.newBuilder()
                             .withSize(Config.DRAW_SIZE)
                             .build())
-            State.drawing.pushOverlayAt(maybeTempLayer.get(), 1)
+            // TODO: use service instead
+            context.drawing.pushOverlayAt(maybeTempLayer.get(), 1)
         }
 
         // Draw the initial tile (if drawTool draws is at all) with border.
-        State.drawTool.draw(
-                DrawCommand(State.tile.withModifiers(Modifiers.border()), position, position, false),
+        // TODO: rename this to `currentTool`
+        context.drawTool.draw(
+                DrawCommand(context.tile.withModifiers(Modifiers.border()), position, position, false),
                 maybeTempLayer.get())
         return Processed
     }
@@ -100,8 +103,8 @@ class DrawController : MouseEventHandler {
 
                 // Draw the temporary thing.
                 tempLayer.clear()
-                State.drawTool.draw(
-                        DrawCommand(State.tile, startPosition, position, false),
+                context.drawTool.draw(
+                        DrawCommand(context.tile, startPosition, position, false),
                         tempLayer)
 
                 // Draw border around the tile on mouse position.
@@ -126,16 +129,17 @@ class DrawController : MouseEventHandler {
                 // Select tile on mouse position.
                 selectionLayer.clear()
                 selectionLayer.draw(
-                        State.tile.withModifiers(Modifiers.border()),
+                        context.tile.withModifiers(Modifiers.border()),
                         position)
 
                 // Draw the thing onto the real layer.
-                State.drawTool.draw(
-                        DrawCommand(State.tile, startPosition, position, true),
-                        State.layerRegistry.selected.get().layer)
+                context.drawTool.draw(
+                        DrawCommand(context.tile, startPosition, position, true),
+                        context.layerRegistry.selected.get().layer)
 
                 // Cleanup
-                State.drawing.removeOverlay(tempLayer, 1)
+                // TODO: use service
+                context.drawing.removeOverlay(tempLayer, 1)
                 maybeStartPosition = Maybe.empty()
                 maybeTempLayer = Maybe.empty()
             }
@@ -150,8 +154,8 @@ class DrawController : MouseEventHandler {
 
     private fun isDrawAllowed(): Boolean {
         // Do not allow drawing if selected layer is locked.
-        if (State.layerRegistry.selected.isPresent) {
-            return !State.layerRegistry.selected.get().lockedProperty.value
+        if (context.layerRegistry.selected.isPresent) {
+            return !context.layerRegistry.selected.get().lockedProperty.value
         }
         return false
     }

@@ -1,8 +1,8 @@
 package org.hexworks.microcline.components.layerfragments
 
 import org.hexworks.cobalt.databinding.api.extensions.onChange
+import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.layers.Layer
-import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
@@ -11,7 +11,9 @@ import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
 import org.hexworks.zircon.api.uievent.Processed
 
 
-class SelectFragment(position: Position, layer: Layer) : Fragment {
+class SelectFragment(position: Position,
+                     layer: Layer,
+                     private val context: EditorContext) : Fragment {
 
     override val root = Components.toggleButton()
             .withPosition(position)
@@ -21,7 +23,8 @@ class SelectFragment(position: Position, layer: Layer) : Fragment {
                 onComponentEvent(ACTIVATED) {
                     // Should not really toggle, but should work like a radio button.
                     this.isSelected = true
-                    State.layerRegistry.select(layer)
+                    // TODO: move this to a service
+                    context.layerRegistry.select(layer)
                     Processed
                 }
             }

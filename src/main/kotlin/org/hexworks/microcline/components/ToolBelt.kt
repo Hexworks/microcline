@@ -6,13 +6,13 @@ import org.hexworks.microcline.components.dialogs.LayerSelectorDialog
 import org.hexworks.microcline.components.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.components.dialogs.TileSelectorDialog
 import org.hexworks.microcline.config.Config
+import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.events.DrawModeChanged
 import org.hexworks.microcline.data.events.FileChanged
 import org.hexworks.microcline.data.events.LayerSelected
 import org.hexworks.microcline.data.events.MousePosition
 import org.hexworks.microcline.data.events.TileChanged
 import org.hexworks.microcline.drawtools.DrawTool
-import org.hexworks.microcline.state.State
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Modifiers
 import org.hexworks.zircon.api.component.Panel
@@ -23,9 +23,10 @@ import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.internal.Zircon
 import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 
-
+// TODO: use services
 class ToolBelt(screen: Screen,
                position: Position,
+               private val context: EditorContext,
                val panel: Panel = Components.panel()
                        .wrapWithBox(true)
                        .withSize(Size.create(Config.WINDOW_WIDTH, Config.TOOLBELT_HEIGHT + 2 * Config.BORDER_SIZE))
@@ -59,25 +60,25 @@ class ToolBelt(screen: Screen,
                 Position.zero(),
                 "Tile",
                 tilePanel,
-                { screen.openModal(TileSelectorDialog(screen)) }
+                { screen.openModal(TileSelectorDialog(screen, context)) }
         )
         val modeTool = Tool(
                 Position.topRightOf(tileTool.wrapper),
                 "Mode",
                 modeText,
-                { screen.openModal(ModeSelectorDialog(screen)) }
+                { screen.openModal(ModeSelectorDialog(screen, context)) }
         )
         val layerTool = Tool(
                 Position.topRightOf(modeTool.wrapper),
                 "Layer",
                 layerText,
-                { screen.openModal(LayerSelectorDialog(screen)) }
+                { screen.openModal(LayerSelectorDialog(screen, context)) }
         )
         val fileTool = Tool(
                 Position.topRightOf(layerTool.wrapper),
                 "File",
                 fileText,
-                { screen.openModal(FileSelectorDialog(screen)) }
+                { screen.openModal(FileSelectorDialog(screen, context)) }
         )
         val xPosTool = Tool(
                 Position.topRightOf(fileTool.wrapper),
@@ -100,9 +101,9 @@ class ToolBelt(screen: Screen,
         panel.addComponent(yPosTool.wrapper)
 
         // Init selectors.
-        updateTile(State.tile)
-        updateMode(State.drawTool)
-        updateLayer(State.layerRegistry.selected.get().labelProperty.value)
+        updateTile(context.tile)
+        updateMode(context.drawTool)
+        updateLayer(context.layerRegistry.selected.get().labelProperty.value)
         updateFile(Config.NONAME_FILE)
 
         // Event subscriptions.
