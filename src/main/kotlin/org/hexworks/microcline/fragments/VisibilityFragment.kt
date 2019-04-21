@@ -1,4 +1,4 @@
-package org.hexworks.microcline.components.layerfragments
+package org.hexworks.microcline.fragments
 
 import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
@@ -25,13 +25,8 @@ class VisibilityFragment(position: Position,
                     visibilityProperty.value = it.newValue
                     Zircon.eventBus.publish(LayerOrderChanged(true))
                 }
+                visibilityProperty.onChange {
+                    isSelected = it.newValue
+                }
             }
-
-    init {
-        root.isSelected = visibilityProperty.value
-        visibilityProperty.onChange {
-            root.isSelected = it.newValue
-        }
-    }
-
 }

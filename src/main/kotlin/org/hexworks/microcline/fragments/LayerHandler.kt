@@ -1,9 +1,9 @@
-package org.hexworks.microcline.components
+package org.hexworks.microcline.fragments
 
-import org.hexworks.microcline.components.layerfragments.*
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.layers.Layer
 import org.hexworks.zircon.api.Components
+import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
 
 
@@ -11,9 +11,9 @@ class LayerHandler(position: Position,
                    isFirst: Boolean,
                    isLast: Boolean,
                    val layer: Layer,
-                   private val context: EditorContext) {
+                   private val context: EditorContext) : Fragment {
 
-    val panel = Components.panel()
+    override val root = Components.panel()
             .withPosition(position)
             .withSize(22, 1)
             .build().apply {
@@ -25,5 +25,4 @@ class LayerHandler(position: Position,
                 addFragment(ClearFragment(Position.create(19, 0), layer.lockedProperty, layer.layer))
                 addFragment(RemoveFragment(Position.create(20, 0), layer, context))
             }
-
 }

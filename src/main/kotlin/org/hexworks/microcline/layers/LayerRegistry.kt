@@ -3,7 +3,7 @@ package org.hexworks.microcline.layers
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.ifPresent
 import org.hexworks.cobalt.events.api.subscribe
-import org.hexworks.microcline.components.LayerHandler
+import org.hexworks.microcline.fragments.LayerHandler
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.events.LayerMovedDown
 import org.hexworks.microcline.events.LayerMovedUp

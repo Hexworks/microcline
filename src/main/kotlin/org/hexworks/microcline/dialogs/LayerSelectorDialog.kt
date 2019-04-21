@@ -1,4 +1,4 @@
-package org.hexworks.microcline.components.dialogs
+package org.hexworks.microcline.dialogs
 
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.microcline.config.Config
@@ -46,7 +46,7 @@ class LayerSelectorDialog(screen: Screen,
     private fun rebuildList(container: Container) {
         container.detachAllComponents()
         context.layerRegistry.layerHandlers().forEach {
-            container.addComponent(it.panel)
+            container.addFragment(it)
         }
         // TODO: lift the size constraint once we can scroll lists in Zircon.
         if (context.layerRegistry.layers().size < 10) {

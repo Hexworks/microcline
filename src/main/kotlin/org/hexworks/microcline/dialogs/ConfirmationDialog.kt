@@ -1,4 +1,4 @@
-package org.hexworks.microcline.components.dialogs
+package org.hexworks.microcline.dialogs
 
 import org.hexworks.microcline.config.Config
 import org.hexworks.zircon.api.Components

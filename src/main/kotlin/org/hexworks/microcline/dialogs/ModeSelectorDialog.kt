@@ -1,4 +1,4 @@
-package org.hexworks.microcline.components.dialogs
+package org.hexworks.microcline.dialogs
 
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.DrawTools

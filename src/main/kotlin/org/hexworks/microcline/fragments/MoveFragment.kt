@@ -1,4 +1,4 @@
-package org.hexworks.microcline.components.layerfragments
+package org.hexworks.microcline.fragments
 
 import org.hexworks.microcline.events.LayerMovedDown
 import org.hexworks.microcline.events.LayerMovedUp

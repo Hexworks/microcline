@@ -1,4 +1,4 @@
-package org.hexworks.microcline.components.dialogs
+package org.hexworks.microcline.dialogs
 
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.map

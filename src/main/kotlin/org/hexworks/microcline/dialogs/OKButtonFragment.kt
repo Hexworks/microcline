@@ -1,7 +1,6 @@
-package org.hexworks.microcline.components.dialogs
+package org.hexworks.microcline.dialogs
 
 import org.hexworks.zircon.api.Components
-import org.hexworks.zircon.api.component.ComponentAlignment
 import org.hexworks.zircon.api.component.ComponentAlignment.*
 import org.hexworks.zircon.api.component.Container
 import org.hexworks.zircon.api.component.Fragment

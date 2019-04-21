@@ -1,7 +1,6 @@
-package org.hexworks.microcline.components.dialogs
+package org.hexworks.microcline.dialogs
 
 import org.hexworks.microcline.config.Config
-import org.hexworks.zircon.api.ColorThemes
 import org.hexworks.zircon.api.builder.component.ModalBuilder
 import org.hexworks.zircon.api.component.Container
 import org.hexworks.zircon.api.component.modal.Modal

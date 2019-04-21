@@ -1,32 +1,33 @@
-package org.hexworks.microcline.components.layerfragments
+package org.hexworks.microcline.fragments
 
 import org.hexworks.cobalt.databinding.api.expression.not
-import org.hexworks.cobalt.databinding.api.property.Property
+import org.hexworks.microcline.context.EditorContext
+import org.hexworks.microcline.layers.Layer
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.extensions.onComponentEvent
-import org.hexworks.zircon.api.graphics.Layer
 import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
 import org.hexworks.zircon.api.uievent.Pass
 import org.hexworks.zircon.api.uievent.Processed
 
-/**
- * [Fragment] which adds the **Clear** operation for a [Layer].
- */
-class ClearFragment(position: Position, lockedProperty: Property<Boolean>, layer: Layer)
-    : Fragment {
+
+class RemoveFragment(position: Position,
+                     layer: Layer,
+                     private val context: EditorContext) : Fragment {
 
     override val root = Components.button()
             .withPosition(position)
-            .withText("Clear")
+            .withText("X")
+            .wrapSides(false)
             .build().apply {
                 onComponentEvent(ACTIVATED) {
                     if (isEnabled) {
-                        layer.clear()
+                        // TODO: use service
+                        context.layerRegistry.remove(layer)
                         Processed
                     } else Pass
                 }
-                enabledProperty.bind(lockedProperty.not())
+                enabledProperty.bind(layer.lockedProperty.not())
             }
 }

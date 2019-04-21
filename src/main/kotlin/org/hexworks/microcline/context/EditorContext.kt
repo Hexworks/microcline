@@ -14,6 +14,7 @@ import org.hexworks.zircon.api.Blocks
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.builder.game.GameAreaBuilder
 import org.hexworks.zircon.api.data.Block
+import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Size3D
 import org.hexworks.zircon.api.graphics.Symbols
@@ -68,8 +69,8 @@ class EditorContext {
             .withCharacter(DEFAULT_GLYPH)
             .withBackgroundColor(Palettes.XTERM_256.colors[0]) // ANSI Black
             .withForegroundColor(Palettes.XTERM_256.colors[7]) // ANSI White
-            .build())
-    var selectedTile: Tile by selectedTileProperty.asDelegate()
+            .buildCharacterTile())
+    var selectedTile: CharacterTile by selectedTileProperty.asDelegate()
 
     /**
      * Property for the currently selected [DrawTool].
