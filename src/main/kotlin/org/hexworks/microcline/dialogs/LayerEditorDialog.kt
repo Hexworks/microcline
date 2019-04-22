@@ -6,16 +6,16 @@ import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.screen.Screen
 
 
-class LayerSelectorDialog(screen: Screen,
-                          private val context: EditorContext) : BaseDialog(screen) {
+class LayerEditorDialog(screen: Screen,
+                        private val context: EditorContext) : BaseDialog(screen) {
 
     override val content = Components.panel()
             .withTitle("Edit Layers")
-            .withSize(30, 15)
+            .withSize(50, 15)
             .withBoxType(BoxType.DOUBLE)
             .wrapWithBox()
             .build().apply {
-
+                contentPosition
             }
 
 

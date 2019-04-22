@@ -5,7 +5,7 @@ import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.dialogs.FileSelectorDialog
-import org.hexworks.microcline.dialogs.LayerSelectorDialog
+import org.hexworks.microcline.dialogs.LayerEditorDialog
 import org.hexworks.microcline.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.dialogs.TileSelectorDialog
 import org.hexworks.microcline.extensions.onMouseEvent
@@ -77,7 +77,7 @@ class ToolBelt(screen: Screen,
             position = Position.topRightOf(modeTool.root),
             buttonLabel = "Layer",
             visualization = layerText,
-            activationHandler = { screen.openModal(LayerSelectorDialog(screen, context)) })
+            activationHandler = { screen.openModal(LayerEditorDialog(screen, context)) })
 
     private val fileTool = Tool(
             position = Position.topRightOf(layerTool.root),
