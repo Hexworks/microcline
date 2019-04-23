@@ -12,4 +12,5 @@
 
     <logger name="org.hexworks.zircon" level="warn"/>
     <logger name="org.hexworks.cobalt" level="warn"/>
+
 </configuration>

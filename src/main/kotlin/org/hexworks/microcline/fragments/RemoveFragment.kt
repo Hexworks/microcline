@@ -18,8 +18,7 @@ class RemoveFragment(position: Position,
 
     override val root = Components.button()
             .withPosition(position)
-            .withText("X")
-            .wrapSides(false)
+            .withText("Remove")
             .build().apply {
                 onComponentEvent(ACTIVATED) {
                     drawLayerEditor.removeLayer(layer)

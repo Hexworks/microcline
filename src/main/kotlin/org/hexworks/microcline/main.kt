@@ -12,9 +12,7 @@ fun main() {
             .startApplication(Config.buildAppConfig())
     val context = EditorContext()
     val view = DrawView(context)
-    DrawController(
-            context = context,
-            view = view)
+    DrawController(context = context)
 
     app.dock(view)
 }

@@ -10,16 +10,10 @@ import org.hexworks.zircon.api.extensions.onSelectionChanged
 class LockFragment(position: Position,
                    layer: DrawLayer) : Fragment {
 
-    override val root = Components.toggleButton()
+    override val root = Components.checkBox()
             .withPosition(position)
-            .withText("L")
-            .wrapSides(false)
             .build().apply {
-                isSelected = layer.lockedProperty.value
-
-                onSelectionChanged {
-                    layer.lockedProperty.value = it.newValue
-                }
+                selectedProperty.bindBidirectional(layer.lockedProperty)
             }
 
 }

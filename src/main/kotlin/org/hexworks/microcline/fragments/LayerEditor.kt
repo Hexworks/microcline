@@ -13,14 +13,14 @@ class LayerEditor(position: Position,
 
     override val root = Components.panel()
             .withPosition(position)
-            .withSize(22, 1)
+            .withSize(50, 1)
             .build().apply {
-                addFragment(SelectFragment(Position.create(1, 0), layer))
-                addFragment(VisibilityFragment(Position.create(2, 0), layer))
-                addFragment(LabelFragment(Position.create(4, 0), 10, layer))
-                addFragment(MoveFragment(Position.create(15, 0), layer, context.drawLayerEditor))
-                addFragment(LockFragment(Position.create(18, 0), layer))
-                addFragment(ClearFragment(Position.create(19, 0), layer))
-                addFragment(RemoveFragment(Position.create(20, 0), layer, context.drawLayerEditor))
+                addFragment(LabelFragment(Position.create(0, 0), 10, layer))
+                addFragment(SelectFragment(Position.create(9, 0), layer))
+                addFragment(VisibleFragment(Position.create(16, 0), layer, context.drawLayerEditor))
+                addFragment(LockFragment(Position.create(23, 0), layer))
+                addFragment(MoveFragment(Position.create(29, 0), layer, context.drawLayerEditor))
+                addFragment(ClearFragment(Position.create(33, 0), layer, context.drawLayerEditor))
+                addFragment(RemoveFragment(Position.create(41, 0), layer, context.drawLayerEditor))
             }
 }

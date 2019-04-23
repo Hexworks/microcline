@@ -9,13 +9,13 @@ import org.hexworks.microcline.data.Palettes
 import org.hexworks.microcline.drawtools.DrawTool
 import org.hexworks.microcline.services.DrawLayerEditor
 import org.hexworks.zircon.api.Blocks
+import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Tiles
-import org.hexworks.zircon.api.builder.game.GameAreaBuilder
-import org.hexworks.zircon.api.data.Block
+import org.hexworks.zircon.api.component.Panel
 import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.data.Tile
-import org.hexworks.zircon.api.data.impl.Size3D
 import org.hexworks.zircon.api.graphics.Symbols
+import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
 import java.io.File
 
 /**
@@ -24,13 +24,11 @@ import java.io.File
 class EditorContext {
 
     /**
-     * Displays the visible [Layer] on the screen.
+     * Acts as a drawing area.
      */
-    val gameArea = GameAreaBuilder<CharacterTile, Block<CharacterTile>>()
-            .withActualSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, 2))
-            .withVisibleSize(Size3D.create(Config.DRAW_AREA_WIDTH, Config.DRAW_AREA_HEIGHT, 2))
-            .withLayersPerBlock(1)
-            .withDefaultBlock(EMPTY_BLOCK)
+    val drawPanel: Panel = Components.panel()
+            .withSize(Config.DRAW_SIZE)
+            .withComponentRenderer(NoOpComponentRenderer())
             .build()
 
     /**
@@ -38,8 +36,7 @@ class EditorContext {
      * draw layers (ordering, visibility, selection, etc).
      */
     val drawLayerEditor = DrawLayerEditor.create(
-            size = Config.DRAW_SIZE,
-            gameArea = gameArea,
+            targetSurface = drawPanel,
             context = this)
 
     /**
@@ -68,6 +65,8 @@ class EditorContext {
 
     val selectedLayerProperty = drawLayerEditor.selectedLayerProperty
     val selectedLayer: DrawLayer by selectedLayerProperty.asDelegate()
+
+    val currentLayers = drawLayerEditor.currentLayers
 
     companion object {
         private const val DEFAULT_GLYPH = Symbols.FACE_WHITE
