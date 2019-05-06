@@ -4,7 +4,6 @@ import org.hexworks.microcline.data.DrawLayer
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.extensions.onSelectionChanged
 
 
 class LockFragment(position: Position,
@@ -13,7 +12,7 @@ class LockFragment(position: Position,
     override val root = Components.checkBox()
             .withPosition(position)
             .build().apply {
-                selectedProperty.bindBidirectional(layer.lockedProperty)
+                selectedProperty.bind(layer.lockedProperty)
             }
 
 }

@@ -12,8 +12,8 @@ class SelectFragment(position: Position,
     override val root = Components.checkBox()
             .withPosition(position)
             .build().apply {
-                selectedProperty.bindBidirectional(layer.selectedProperty)
-                enabledProperty.bind(layer.selectedProperty.not())
+                selectedProperty.bind(layer.selectedProperty)
+                enabledProperty.updateFrom(layer.selectedProperty.not())
             }
 
 }

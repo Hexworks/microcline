@@ -11,7 +11,7 @@ import org.hexworks.zircon.api.data.Size
 object Config {
 
     val TILESET = CP437TilesetResources.rexPaint14x14()
-    val THEME = ColorThemes.amigaOs()
+    val THEME = ColorThemes.solarizedLightBlue()
     // 80x45 -> 16:9 ratio
     const val DRAW_AREA_WIDTH: Int = 80
     const val DRAW_AREA_HEIGHT: Int = 45
@@ -25,8 +25,8 @@ object Config {
     fun buildAppConfig(): AppConfig = AppConfigs.newConfig()
             .enableBetaFeatures()
             .withTitle("Microcline")
-            .withDefaultTileset(Config.TILESET)
-            .withSize(Sizes.create(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
+            .withDefaultTileset(TILESET)
+            .withSize(Sizes.create(WINDOW_WIDTH, WINDOW_HEIGHT))
             .build()
 
 }

@@ -42,13 +42,13 @@ class EditorContext {
     /**
      * Property for the currently selected [Tile] (glyph + colors).
      */
-    val selectedTileProperty = createPropertyFrom(Tiles
+    val selectedTileProperty = createPropertyFrom<Tile>(Tiles
             .newBuilder()
             .withCharacter(DEFAULT_GLYPH)
             .withBackgroundColor(Palettes.XTERM_256.colors[0]) // ANSI Black
             .withForegroundColor(Palettes.XTERM_256.colors[7]) // ANSI White
             .buildCharacterTile())
-    var selectedTile: CharacterTile by selectedTileProperty.asDelegate()
+    var selectedTile: Tile by selectedTileProperty.asDelegate()
 
     /**
      * Property for the currently selected [DrawTool].
@@ -66,7 +66,8 @@ class EditorContext {
     val selectedLayerProperty = drawLayerEditor.selectedLayerProperty
     val selectedLayer: DrawLayer by selectedLayerProperty.asDelegate()
 
-    val currentLayers = drawLayerEditor.currentLayers
+    val currentLayers: List<DrawLayer>
+        get() = drawLayerEditor.currentLayers
 
     companion object {
         private const val DEFAULT_GLYPH = Symbols.FACE_WHITE

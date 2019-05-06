@@ -1,6 +1,5 @@
 package org.hexworks.microcline.fragments
 
-import org.hexworks.cobalt.databinding.api.extensions.bind
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
@@ -20,7 +19,6 @@ import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_MOVED
 import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
 
-// TODO: use services
 class ToolBelt(screen: Screen,
                position: Position,
                private val context: EditorContext) : Fragment {
@@ -43,20 +41,24 @@ class ToolBelt(screen: Screen,
             .withSize(Size.create(9, 1))
             .withText(context.currentTool.name)
             .build().apply {
-                textProperty.bind(context.currentToolProperty) {
+                textProperty.updateFrom(context.currentToolProperty) {
                     it.name
                 }
             }
 
     private val layerText = Components.label()
             .withSize(Size.create(8, 1))
-            .build()
+            .build().apply {
+                textProperty.updateFrom(context.selectedLayerProperty) {
+                    it.label
+                }
+            }
 
     private val fileText = Components.label()
             .withSize(Size.create(10, 1))
             .withText(Config.NONAME_FILE)
             .build().apply {
-                textProperty.bind(context.currentFileProperty) {
+                textProperty.updateFrom(context.currentFileProperty) {
                     it.map { file -> file.name }.orElse(Config.NONAME_FILE)
                 }
             }

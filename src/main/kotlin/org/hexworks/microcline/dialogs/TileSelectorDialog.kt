@@ -172,7 +172,7 @@ class TileSelectorDialog(screen: Screen,
                 .get()
         panel.setTileAt(position, selectedTile.withBackgroundColor(ANSITileColor.CYAN).withForegroundColor(ANSITileColor.RED))
 
-        context.selectedTile = context.selectedTile.withCharacter(selectedTile.character)
+        context.selectedTile = context.selectedTile.asCharacterTile().get().withCharacter(selectedTile.character)
     }
 
 }

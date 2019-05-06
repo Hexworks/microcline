@@ -28,6 +28,6 @@ class ClearFragment(position: Position,
                     drawLayerEditor.redrawLayers()
                     Processed
                 }
-                enabledProperty.bind(layer.lockedProperty.not())
+                enabledProperty.updateFrom(layer.lockedProperty.not())
             }
 }

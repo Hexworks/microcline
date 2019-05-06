@@ -1,7 +1,6 @@
 package org.hexworks.microcline.services
 
 import org.hexworks.cobalt.databinding.api.createPropertyFrom
-import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.map
@@ -28,7 +27,8 @@ class DrawLayerEditor(private val targetSurface: DrawSurface,
 
     val selectedLayerProperty: Property<DrawLayer> = createPropertyFrom(layers.first())
 
-    val currentLayers = layers.toList()
+    val currentLayers: List<DrawLayer>
+        get() = layers.toList()
 
     private val size: Size
         get() = targetSurface.size
