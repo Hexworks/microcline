@@ -15,6 +15,7 @@ import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Size
 import org.hexworks.zircon.api.screen.Screen
+import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_DRAGGED
 import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_MOVED
 import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
@@ -87,7 +88,7 @@ class ToolBelt(screen: Screen,
             visualization = fileText,
             activationHandler = { screen.openModal(FileSelectorDialog(screen, context)) })
 
-    private val positionText = Components.label()
+    private val mousePosition = Components.label()
             .withSize(Size.create(13, 3))
             .wrapWithBox(true)
             .withAlignmentWithin(root, ComponentAlignment.BOTTOM_RIGHT)
@@ -99,13 +100,20 @@ class ToolBelt(screen: Screen,
         root.addFragment(modeTool)
         root.addFragment(layerTool)
         root.addFragment(fileTool)
-        root.addComponent(positionText)
+        root.addComponent(mousePosition)
 
         screen.onMouseEvent(MOUSE_MOVED, TARGET) {
-            val pos = it.position - Positions.offset1x1()
-            positionText.text = "X: ${pos.x} Y: ${pos.y}"
+            updateMousePosition(it.position)
+            Processed
+        }
+        screen.onMouseEvent(MOUSE_DRAGGED, TARGET) {
+            updateMousePosition(it.position)
             Processed
         }
     }
 
+    private fun updateMousePosition(pos: Position) {
+        val p = pos - Positions.offset1x1()
+        mousePosition.text = "X: ${p.x} Y: ${p.y}"
+    }
 }
