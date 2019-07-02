@@ -7,12 +7,9 @@ import org.hexworks.microcline.views.DrawView
 import org.hexworks.zircon.api.SwingApplications
 
 fun main() {
-
     val app = SwingApplications
             .startApplication(Config.buildAppConfig())
     val context = EditorContext()
-    val view = DrawView(context)
     DrawController(context = context)
-
-    app.dock(view)
+    app.dock(DrawView(context))
 }

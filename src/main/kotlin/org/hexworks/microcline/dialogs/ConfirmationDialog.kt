@@ -1,6 +1,8 @@
 package org.hexworks.microcline.dialogs
 
 import org.hexworks.microcline.config.Config
+import org.hexworks.microcline.dialogs.ConfirmationDialog.No
+import org.hexworks.microcline.dialogs.ConfirmationDialog.Yes
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.builder.component.ModalBuilder
@@ -10,11 +12,11 @@ import org.hexworks.zircon.api.component.modal.Modal
 import org.hexworks.zircon.api.component.modal.ModalFragment
 import org.hexworks.zircon.api.component.modal.ModalResult
 import org.hexworks.zircon.api.data.Size
-import org.hexworks.zircon.api.extensions.onComponentEvent
+import org.hexworks.zircon.api.extensions.box
+import org.hexworks.zircon.api.extensions.processComponentEvents
 import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
-import org.hexworks.zircon.api.uievent.Processed
 
 /**
  * Creates a new [Modal] which can be used for a yes/no confirmation.
@@ -27,9 +29,8 @@ class ConfirmationDialog(private val screen: Screen,
     : ModalFragment<ModalResult> {
 
     private val container = Components.panel()
-            .withTitle(message)
             .withSize(size)
-            .withBoxType(BoxType.DOUBLE)
+            .withDecorations(box(boxType = BoxType.DOUBLE, title = message))
             .build()
 
     override val root: Modal<ModalResult> by lazy {
@@ -43,18 +44,16 @@ class ConfirmationDialog(private val screen: Screen,
                             .withText("Yes")
                             .withAlignmentWithin(container, BOTTOM_LEFT)
                             .build().apply {
-                                onComponentEvent(ACTIVATED) {
+                                this.processComponentEvents(ACTIVATED) {
                                     modal.close(Yes)
-                                    Processed
                                 }
                             })
                     container.addComponent(Components.button()
                             .withText("No")
                             .withAlignmentWithin(container, BOTTOM_RIGHT)
                             .build().apply {
-                                onComponentEvent(ACTIVATED) {
+                                processComponentEvents(ACTIVATED) {
                                     modal.close(No)
-                                    Processed
                                 }
                             })
                     container.applyColorTheme(Config.THEME)

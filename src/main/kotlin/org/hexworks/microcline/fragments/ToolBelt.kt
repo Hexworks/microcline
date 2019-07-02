@@ -7,28 +7,25 @@ import org.hexworks.microcline.dialogs.FileSelectorDialog
 import org.hexworks.microcline.dialogs.LayerEditorDialog
 import org.hexworks.microcline.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.dialogs.TileSelectorDialog
-import org.hexworks.microcline.extensions.onMouseEvent
+import org.hexworks.microcline.extensions.processMouseEvents
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
-import org.hexworks.zircon.api.component.ComponentAlignment
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Size
+import org.hexworks.zircon.api.extensions.box
 import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_DRAGGED
 import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_MOVED
-import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
 
 class ToolBelt(screen: Screen,
-               position: Position,
                private val context: EditorContext) : Fragment {
 
-    override val root = Components.panel()
+    override val root = Components.hbox()
             .withSize(Size.create(
                     width = Config.WINDOW_WIDTH,
                     height = Config.TOOLBELT_HEIGHT + 2 * Config.BORDER_SIZE))
-            .withPosition(position)
             .build()
 
     private val selectedTileIcon = Components.icon()
@@ -51,7 +48,7 @@ class ToolBelt(screen: Screen,
             .withSize(Size.create(8, 1))
             .build().apply {
                 textProperty.updateFrom(context.selectedLayerProperty) {
-                    it.label
+                    it.name
                 }
             }
 
@@ -65,33 +62,28 @@ class ToolBelt(screen: Screen,
             }
 
     private val tileTool = Tool(
-            position = Position.zero(),
             buttonLabel = "Tile",
             visualization = selectedTileIcon,
             activationHandler = { screen.openModal(TileSelectorDialog(screen, context)) })
 
     private val modeTool = Tool(
-            position = Position.topRightOf(tileTool.root),
             buttonLabel = "Mode",
             visualization = modeText,
             activationHandler = { screen.openModal(ModeSelectorDialog(screen, context)) })
 
     private val layerTool = Tool(
-            position = Position.topRightOf(modeTool.root),
             buttonLabel = "Layer",
             visualization = layerText,
             activationHandler = { screen.openModal(LayerEditorDialog(screen, context)) })
 
     private val fileTool = Tool(
-            position = Position.topRightOf(layerTool.root),
             buttonLabel = "File",
             visualization = fileText,
             activationHandler = { screen.openModal(FileSelectorDialog(screen, context)) })
 
     private val mousePosition = Components.label()
             .withSize(Size.create(13, 3))
-            .wrapWithBox(true)
-            .withAlignmentWithin(root, ComponentAlignment.BOTTOM_RIGHT)
+            .withDecorations(box())
             .withText("X: 0, Y: 0")
             .build()
 
@@ -102,13 +94,11 @@ class ToolBelt(screen: Screen,
         root.addFragment(fileTool)
         root.addComponent(mousePosition)
 
-        screen.onMouseEvent(MOUSE_MOVED, TARGET) {
+        screen.processMouseEvents(MOUSE_MOVED, TARGET) {
             updateMousePosition(it.position)
-            Processed
         }
-        screen.onMouseEvent(MOUSE_DRAGGED, TARGET) {
+        screen.processMouseEvents(MOUSE_DRAGGED, TARGET) {
             updateMousePosition(it.position)
-            Processed
         }
     }
 

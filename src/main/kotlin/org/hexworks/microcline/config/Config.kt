@@ -22,6 +22,8 @@ object Config {
     const val WINDOW_HEIGHT: Int = 4 * BORDER_SIZE + DRAW_AREA_HEIGHT + TOOLBELT_HEIGHT
     const val NONAME_FILE: String = "<noname>"
 
+    val DRAW_AREA_SIZE = Size.create(WINDOW_WIDTH, DRAW_AREA_HEIGHT + 2 * BORDER_SIZE)
+
     fun buildAppConfig(): AppConfig = AppConfigs.newConfig()
             .enableBetaFeatures()
             .withTitle("Microcline")

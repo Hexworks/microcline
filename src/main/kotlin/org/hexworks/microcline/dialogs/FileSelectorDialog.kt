@@ -4,11 +4,13 @@ import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
-import org.hexworks.microcline.extensions.onMouseEvent
+import org.hexworks.microcline.extensions.handleMouseEvents
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.api.extensions.box
 import org.hexworks.zircon.api.extensions.onClosed
-import org.hexworks.zircon.api.extensions.onComponentEvent
+import org.hexworks.zircon.api.extensions.processComponentEvents
+import org.hexworks.zircon.api.extensions.side
 import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
@@ -23,18 +25,16 @@ class FileSelectorDialog(screen: Screen,
 
     // TODO: use service
     override val content = Components.panel()
-            .withTitle("File")
             .withSize(34, 12)
-            .withBoxType(BoxType.DOUBLE)
-            .wrapWithBox()
+            .withDecorations(box(boxType = BoxType.DOUBLE, title = "File"))
             .build().apply {
                 val filePath = Components.textArea()
                         .withPosition(Position.offset1x1())
                         .withSize(30, 5)
                         .withText(context.currentFile.map { it.absolutePath }.orElse(Config.NONAME_FILE))
                         .build().apply {
-                            disable()
-                            onMouseEvent(MOUSE_RELEASED, UIEventPhase.TARGET) {
+                            isDisabled = true
+                            handleMouseEvents(MOUSE_RELEASED, UIEventPhase.TARGET) {
                                 JFileChooser().also { fc ->
                                     if (fc.showDialog(null, "Select") == JFileChooser.APPROVE_OPTION) {
                                         text = fc.selectedFile.absolutePath
@@ -49,9 +49,9 @@ class FileSelectorDialog(screen: Screen,
                 addComponent(Components.button()
                         .withPosition(1, 7)
                         .withText("New")
-                        .wrapSides(true)
+                        .withDecorations(side())
                         .build().apply {
-                            onComponentEvent(ACTIVATED) {
+                            processComponentEvents(ACTIVATED) {
                                 println("new: reset state")
                                 val modal = ConfirmationDialog(screen).apply {
                                     root.onClosed {
@@ -63,29 +63,26 @@ class FileSelectorDialog(screen: Screen,
                                 }
                                 screen.openModal(modal)
                                 filePath.text = Config.NONAME_FILE
-                                Processed
                             }
                         })
 
                 addComponent(Components.button()
                         .withPosition(13, 7)
                         .withText("Open")
-                        .wrapSides(true)
+                        .withDecorations(side())
                         .build().apply {
-                            onComponentEvent(ACTIVATED) {
+                            processComponentEvents(ACTIVATED) {
                                 println("open: load state")
-                                Processed
                             }
                         })
 
                 addComponent(Components.button()
                         .withPosition(25, 7)
                         .withText("Save")
-                        .wrapSides(true)
+                        .withDecorations(side())
                         .build().apply {
-                            onComponentEvent(ACTIVATED) {
+                            processComponentEvents(ACTIVATED) {
                                 println("save: persist state")
-                                Processed
                             }
                         })
             }

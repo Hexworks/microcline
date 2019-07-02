@@ -3,22 +3,15 @@ package org.hexworks.microcline.fragments
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.zircon.api.Components
-import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.component.Fragment
-import org.hexworks.zircon.api.data.Block
-import org.hexworks.zircon.api.data.CharacterTile
-import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.data.Size
-import org.hexworks.zircon.api.game.GameComponent
+import org.hexworks.zircon.api.extensions.box
 
 
-class DrawArea(position: Position,
-               private val context: EditorContext) : Fragment {
+class DrawArea(context: EditorContext) : Fragment {
 
     override val root = Components.panel()
-            .wrapWithBox(true)
-            .withSize(Size.create(Config.WINDOW_WIDTH, Config.DRAW_AREA_HEIGHT + 2 * Config.BORDER_SIZE))
-            .withPosition(position)
+            .withDecorations(box())
+            .withSize(Config.DRAW_AREA_SIZE)
             .build().apply {
                 addComponent(context.drawPanel)
             }

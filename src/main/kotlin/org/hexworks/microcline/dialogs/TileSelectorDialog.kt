@@ -4,14 +4,17 @@ import org.hexworks.cobalt.datatypes.extensions.flatMap
 import org.hexworks.microcline.context.EditorContext
 import org.hexworks.microcline.data.MouseButton
 import org.hexworks.microcline.data.Palettes
-import org.hexworks.microcline.extensions.onMouseEvent
+import org.hexworks.microcline.extensions.handleMouseEvents
+import org.hexworks.microcline.extensions.processMouseEvents
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.color.TileColor
+import org.hexworks.zircon.api.component.Container
 import org.hexworks.zircon.api.component.Panel
 import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.api.extensions.box
 import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_PRESSED
@@ -26,87 +29,85 @@ class TileSelectorDialog(screen: Screen,
                          private val context: EditorContext) : BaseDialog(screen) {
 
     override val content = Components.panel()
-            .withTitle("Pick Tile and Color")
             .withSize(40, 23)
-            .withBoxType(BoxType.DOUBLE)
-            .wrapWithBox()
-            .build().also { panel ->
-                val glyphPanel = Components.panel()
-                        .wrapWithBox()
-                        .withTitle("Tile")
-                        .withPosition(Position.offset1x1())
-                        .withSize(18, 18)
-                        .withComponentRenderer(NoOpComponentRenderer())
-                        .build().also { glyphPanel ->
+            .withDecorations(box(title = "Pick Tile and Color", boxType = BoxType.DOUBLE))
+            .build().apply {
+                addComponent(Components.hbox()
+                        .withSpacing(1)
+                        .withSize(38, 20)
+                        .build().apply {
+                            addComponent(Components.panel()
+                                    .withDecorations(box(title = "Tile"))
+                                    .withPosition(Position.offset1x1())
+                                    .withSize(18, 18)
+                                    .withComponentRenderer(NoOpComponentRenderer())
+                                    .build().apply {
 
-                            // Select current tile.
-                            selectGlyph(glyphPanel, glyphPosition())
+                                        // Select current tile.
+                                        selectGlyph(this, glyphPosition())
 
-                            glyphPanel.onMouseEvent(MOUSE_PRESSED, TARGET) { event ->
-                                // Calculate relative position of the mouse click.
-                                val relativePosition = event.position
-                                        .minus(glyphPanel.absolutePosition)
+                                        handleMouseEvents(MOUSE_PRESSED, TARGET) { event ->
+                                            // Calculate relative position of the mouse click.
+                                            val relativePosition = event.position
+                                                    .minus(absolutePosition)
 
-                                // Do not select border glyphs.
-                                if (relativePosition.x < 1 || relativePosition.x > 16 || relativePosition.y < 1 || relativePosition.y > 16) {
-                                    return@onMouseEvent Pass
-                                }
+                                            // Do not select border glyphs.
+                                            if (relativePosition.x < 1 || relativePosition.x > 16 || relativePosition.y < 1 || relativePosition.y > 16) {
+                                                return@handleMouseEvents Pass
+                                            }
 
-                                selectGlyph(glyphPanel, relativePosition)
-                                Processed
-                            }
-                        }
+                                            selectGlyph(this, relativePosition)
+                                            Processed
+                                        }
+                                    })
 
-                val palettePanel = Components.panel()
-                        .wrapWithBox()
-                        .withTitle("Color")
-                        .withPosition(Position.topRightOf(glyphPanel))
-                        .withSize(18, 18)
-                        .withComponentRenderer(NoOpComponentRenderer())
-                        .build().also { palettePanel ->
-                            // Select current colors.
-                            selectColor(palettePanel, colorPosition(context.selectedTile.foregroundColor), MouseButton.LEFT.id)
-                            selectColor(palettePanel, colorPosition(context.selectedTile.backgroundColor), MouseButton.RIGHT.id)
+                            addComponent(Components.panel()
+                                    .withDecorations(box(title = "Color"))
+                                    .withPosition(Position.offset1x1())
+                                    .withSize(18, 18)
+                                    .build().apply {
+                                        addComponent(Components.panel()
+                                                .withSize(16, 16)
+                                                .withComponentRenderer(NoOpComponentRenderer())
+                                                .build().apply {
+                                                    val palettePicker = this
+                                                    // Select current colors.
+                                                    selectColor(
+                                                            container = palettePicker,
+                                                            position = context.selectedTile.foregroundColor.colorPosition,
+                                                            button = MouseButton.LEFT.id)
+                                                    selectColor(
+                                                            container = palettePicker,
+                                                            position = context.selectedTile.backgroundColor.colorPosition,
+                                                            button = MouseButton.RIGHT.id)
 
-                            palettePanel.onMouseEvent(MOUSE_PRESSED, TARGET) { action ->
-                                // Center mouse button is ignored.
-                                if (action.button == MouseButton.CENTER.id) {
-                                    return@onMouseEvent Pass
-                                }
+                                                    processMouseEvents(MOUSE_PRESSED, TARGET) { action ->
+                                                        if (action.button != MouseButton.CENTER.id) {
+                                                            selectColor(
+                                                                    container = palettePicker,
+                                                                    position = action.position
+                                                                            .minus(palettePicker.absolutePosition),
+                                                                    button = action.button)
+                                                        }
+                                                    }
+                                                })
+                                    })
 
-                                // Calculate relative position of the mouse click.
-                                val relativePosition = action.position
-                                        .minus(palettePanel.position)
-                                        .minus(panel.position)
-
-                                // Do not select border glyphs.
-                                if (relativePosition.x < 1 || relativePosition.x > 16 || relativePosition.y < 1 || relativePosition.y > 16) {
-                                    return@onMouseEvent Pass
-                                }
-
-                                selectColor(palettePanel, relativePosition, action.button)
-                                Processed
-                            }
-
-                        }
-
-                panel.addComponent(glyphPanel)
-                panel.addComponent(palettePanel)
+                        })
             }
 
-    private fun selectColor(panel: Panel, position: Position, button: Int) {
+    private fun selectColor(container: Container, position: Position, button: Int) {
         // Redraw palette.
         Palettes.XTERM_256.colors.forEachIndexed { index, tileColor ->
-            panel.draw(
-                    Tiles.newBuilder()
+            container.draw(
+                    drawable = Tiles.newBuilder()
                             .withBackgroundColor(tileColor)
                             .withCharacter(' ')
                             .build(),
-                    Positions.create(index % 16, index / 16).plus(Positions.offset1x1())
-            )
+                    position = Positions.create(index % 16, index / 16))
         }
 
-        val color = Palettes.XTERM_256.colors[((position.y - 1) * 16) + (position.x - 1)]
+        val color = Palettes.XTERM_256.colors[(position.y * 16) + position.x]
         val (fg, bg) = when (button) {
             MouseButton.LEFT.id -> {
                 color to context.selectedTile.backgroundColor
@@ -118,7 +119,7 @@ class TileSelectorDialog(screen: Screen,
 
         // Mark the selected colors.
         if (fg == bg) {
-            panel.draw(Tiles.newBuilder()
+            container.draw(Tiles.newBuilder()
                     .withBackgroundColor(color)
                     .withForegroundColor(color.invert())
                     .withCharacter('#')
@@ -126,19 +127,19 @@ class TileSelectorDialog(screen: Screen,
                     position
             )
         } else {
-            panel.draw(Tiles.newBuilder()
+            container.draw(Tiles.newBuilder()
                     .withBackgroundColor(bg)
                     .withForegroundColor(bg.invert())
                     .withCharacter('B')
                     .build(),
-                    colorPosition(bg)
+                    bg.colorPosition
             )
-            panel.draw(Tiles.newBuilder()
+            container.draw(Tiles.newBuilder()
                     .withBackgroundColor(fg)
                     .withForegroundColor(fg.invert())
                     .withCharacter('F')
                     .build(),
-                    colorPosition(fg)
+                    fg.colorPosition
             )
         }
 
@@ -150,10 +151,11 @@ class TileSelectorDialog(screen: Screen,
         return Positions.create(idx % 16, idx / 16).plus(Position.offset1x1())
     }
 
-    private fun colorPosition(color: TileColor): Position {
-        val idx = Palettes.XTERM_256.colors.indexOf(color)
-        return Positions.create(idx % 16, idx / 16).plus(Position.offset1x1())
-    }
+    private val TileColor.colorPosition: Position
+        get() {
+            val idx = Palettes.XTERM_256.colors.indexOf(this)
+            return Positions.create(idx % 16, idx / 16)
+        }
 
     private fun selectGlyph(panel: Panel, position: Position) {
         (0..255).forEach {

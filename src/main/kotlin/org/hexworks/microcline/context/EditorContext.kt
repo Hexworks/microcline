@@ -7,12 +7,10 @@ import org.hexworks.microcline.data.DrawLayer
 import org.hexworks.microcline.data.DrawTools
 import org.hexworks.microcline.data.Palettes
 import org.hexworks.microcline.drawtools.DrawTool
-import org.hexworks.microcline.services.DrawLayerEditor
-import org.hexworks.zircon.api.Blocks
+import org.hexworks.microcline.services.LayerEditor
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.component.Panel
-import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.graphics.Symbols
 import org.hexworks.zircon.internal.component.renderer.NoOpComponentRenderer
@@ -32,10 +30,10 @@ class EditorContext {
             .build()
 
     /**
-     * A [DrawLayerEditor] implements the functionality for editing
+     * A [LayerEditor] implements the functionality for editing
      * draw layers (ordering, visibility, selection, etc).
      */
-    val drawLayerEditor = DrawLayerEditor.create(
+    val drawLayerEditor = LayerEditor.create(
             targetSurface = drawPanel,
             context = this)
 
@@ -71,9 +69,5 @@ class EditorContext {
 
     companion object {
         private const val DEFAULT_GLYPH = Symbols.FACE_WHITE
-        private val EMPTY_BLOCK = Blocks.newBuilder<CharacterTile>()
-                .withEmptyTile(Tiles.empty())
-                .withLayers(Tiles.empty())
-                .build()
     }
 }
