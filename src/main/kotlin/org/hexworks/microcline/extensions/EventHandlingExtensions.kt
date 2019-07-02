@@ -2,13 +2,37 @@ package org.hexworks.microcline.extensions
 
 import org.hexworks.cobalt.events.api.CancelState
 import org.hexworks.cobalt.events.api.Subscription
-import org.hexworks.zircon.api.extensions.onKeyboardEvent
-import org.hexworks.zircon.api.extensions.onMouseEvent
-import org.hexworks.zircon.api.uievent.*
+import org.hexworks.zircon.api.extensions.handleKeyboardEvents
+import org.hexworks.zircon.api.extensions.handleMouseEvents
+import org.hexworks.zircon.api.uievent.KeyboardEvent
+import org.hexworks.zircon.api.uievent.KeyboardEventHandler
+import org.hexworks.zircon.api.uievent.KeyboardEventType
+import org.hexworks.zircon.api.uievent.MouseEvent
+import org.hexworks.zircon.api.uievent.MouseEventHandler
+import org.hexworks.zircon.api.uievent.MouseEventType
+import org.hexworks.zircon.api.uievent.Pass
+import org.hexworks.zircon.api.uievent.Processed
+import org.hexworks.zircon.api.uievent.UIEventPhase
+import org.hexworks.zircon.api.uievent.UIEventResponse
+import org.hexworks.zircon.api.uievent.UIEventSource
 
+// TODO: move these to Zircon
+
+/**
+ * Adds a handler for all types of [MouseEvent]s.
+ */
 fun UIEventSource.onAnyMouseEvent(handler: MouseEventHandler) {
     MouseEventType.values().forEach {
-        onMouseEvent(it, handler)
+        handleMouseEvents(it, handler)
+    }
+}
+
+/**
+ * Adds a handler for all types of [KeyboardEvent]s.
+ */
+fun UIEventSource.onAnyKeyboardEvent(handler: KeyboardEventHandler) {
+    KeyboardEventType.values().forEach {
+        handleKeyboardEvents(it, handler)
     }
 }
 
@@ -20,7 +44,7 @@ inline fun UIEventSource.onKeyboardEvent(
         eventType: KeyboardEventType,
         phase: UIEventPhase,
         crossinline fn: (KeyboardEvent) -> UIEventResponse): Subscription {
-    return onKeyboardEvent(eventType) { event, currentPhase ->
+    return handleKeyboardEvents(eventType) { event, currentPhase ->
         if (phase == currentPhase) {
             fn(event)
         } else Pass
@@ -31,13 +55,29 @@ inline fun UIEventSource.onKeyboardEvent(
  * Adds a handler for [MouseEvent]s of the given [eventType]
  * and [phase].
  */
-inline fun UIEventSource.onMouseEvent(
+inline fun UIEventSource.handleMouseEvents(
         eventType: MouseEventType,
         phase: UIEventPhase,
         crossinline fn: (MouseEvent) -> UIEventResponse): Subscription {
-    return onMouseEvent(eventType) { event, currentPhase ->
+    return handleMouseEvents(eventType) { event, currentPhase ->
         if (phase == currentPhase) {
             fn(event)
+        } else Pass
+    }
+}
+
+/**
+ * Adds a handler for [MouseEvent]s of the given [eventType]
+ * and [phase].
+ */
+inline fun UIEventSource.processMouseEvents(
+        eventType: MouseEventType,
+        phase: UIEventPhase,
+        crossinline fn: (MouseEvent) -> Unit): Subscription {
+    return handleMouseEvents(eventType) { event, currentPhase ->
+        if (phase == currentPhase) {
+            fn(event)
+            Processed
         } else Pass
     }
 }
@@ -51,7 +91,7 @@ inline fun UIEventSource.onKeyboardEvent(
         phases: Iterable<UIEventPhase> = UIEventPhase.values().asIterable(),
         crossinline fn: (KeyboardEvent, UIEventPhase) -> UIEventResponse): Subscription {
     return eventTypes.map {
-        onKeyboardEvent(it) { event, currentPhase ->
+        handleKeyboardEvents(it) { event, currentPhase ->
             if (phases.contains(currentPhase)) {
                 fn(event, currentPhase)
             } else Pass
@@ -65,12 +105,12 @@ inline fun UIEventSource.onKeyboardEvent(
  * Adds a handler for [MouseEvent]s of the given [eventTypes]
  * and [phases].
  */
-inline fun UIEventSource.onMouseEvent(
+inline fun UIEventSource.handleMouseEvents(
         eventTypes: Iterable<MouseEventType> = MouseEventType.values().asIterable(),
         phases: Iterable<UIEventPhase> = UIEventPhase.values().asIterable(),
         crossinline fn: (MouseEvent, UIEventPhase) -> UIEventResponse): Subscription {
     return eventTypes.map {
-        onMouseEvent(it) { event, currentPhase ->
+        handleMouseEvents(it) { event, currentPhase ->
             if (phases.contains(currentPhase)) {
                 fn(event, currentPhase)
             } else Pass
