@@ -9,6 +9,7 @@ import org.hexworks.zircon.api.uievent.KeyboardEventHandler
 import org.hexworks.zircon.api.uievent.KeyboardEventType
 import org.hexworks.zircon.api.uievent.MouseEvent
 import org.hexworks.zircon.api.uievent.MouseEventHandler
+import org.hexworks.zircon.api.uievent.MouseEventProcessor
 import org.hexworks.zircon.api.uievent.MouseEventType
 import org.hexworks.zircon.api.uievent.Pass
 import org.hexworks.zircon.api.uievent.Processed
@@ -24,6 +25,12 @@ import org.hexworks.zircon.api.uievent.UIEventSource
 fun UIEventSource.onAnyMouseEvent(handler: MouseEventHandler) {
     MouseEventType.values().forEach {
         handleMouseEvents(it, handler)
+    }
+}
+
+fun UIEventSource.onAnyMouseEvent(handler: MouseEventProcessor) {
+    MouseEventType.values().forEach {
+        processMouseEvents(it, handler)
     }
 }
 

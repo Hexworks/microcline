@@ -54,6 +54,23 @@ dependencies {
     compile "org.hexworks.zircon:zircon.jvm.swing:$zircon_version"
 
     compile "org.hexworks.cobalt:cobalt.databinding-jvm:$cobalt_version"
+
+    testCompile "org.junit.platform:junit-platform-runner:$junit_platform_runner_version"
+
+    testCompile "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    testRuntime "org.junit.jupiter:junit-jupiter-params:$junit_version"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+
+    testCompile "org.mockito:mockito-core:$mockito_version"
+    testCompile "org.mockito:mockito-junit-jupiter:$mockito_version"
+    testCompile "org.assertj:assertj-core:$assertj_version"
+}
+
+test {
+    useJUnitPlatform()
+
+    reports.html.enabled = false
+    reports.junitXml.enabled = false
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {

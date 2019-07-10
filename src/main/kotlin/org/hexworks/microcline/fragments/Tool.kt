@@ -1,6 +1,6 @@
 package org.hexworks.microcline.fragments
 
-import org.hexworks.microcline.context.EditorContext
+import org.hexworks.microcline.context.ApplicationContext
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.component.Component
@@ -13,7 +13,7 @@ import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
 
 /**
  * A [Tool] is an element for a [ToolBelt] which is responsible
- * for editing separate properties of an [EditorContext]
+ * for editing separate properties of an [ApplicationContext]
  */
 class Tool(buttonLabel: String,
            visualization: Component,

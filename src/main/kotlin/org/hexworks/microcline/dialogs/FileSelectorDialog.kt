@@ -1,44 +1,47 @@
 package org.hexworks.microcline.dialogs
 
+import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.microcline.config.Config
-import org.hexworks.microcline.context.EditorContext
+import org.hexworks.microcline.dialogs.base.BaseDialog
+import org.hexworks.microcline.dialogs.base.ConfirmationDialog
+import org.hexworks.microcline.dialogs.result.No
+import org.hexworks.microcline.dialogs.result.Yes
 import org.hexworks.microcline.extensions.handleMouseEvents
 import org.hexworks.zircon.api.Components
+import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.extensions.box
 import org.hexworks.zircon.api.extensions.onClosed
 import org.hexworks.zircon.api.extensions.processComponentEvents
 import org.hexworks.zircon.api.extensions.side
-import org.hexworks.zircon.api.graphics.BoxType
 import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
 import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_RELEASED
 import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.uievent.UIEventPhase
+import java.io.File
 import javax.swing.JFileChooser
 
 
-class FileSelectorDialog(screen: Screen,
-                         private val context: EditorContext) : BaseDialog(screen) {
+class FileSelectorDialog(
+        screen: Screen,
+        selectedFile: Property<Maybe<File>>) : BaseDialog<Nothing>(screen, CONTENT_SIZE, TITLE) {
 
-    // TODO: use service
     override val content = Components.panel()
-            .withSize(34, 12)
-            .withDecorations(box(boxType = BoxType.DOUBLE, title = "File"))
+            .withSize(CONTENT_SIZE)
             .build().apply {
                 val filePath = Components.textArea()
                         .withPosition(Position.offset1x1())
                         .withSize(30, 5)
-                        .withText(context.currentFile.map { it.absolutePath }.orElse(Config.NONAME_FILE))
+                        .withText(selectedFile.value.map { it.absolutePath }.orElse(Config.NONAME_FILE))
                         .build().apply {
                             isDisabled = true
                             handleMouseEvents(MOUSE_RELEASED, UIEventPhase.TARGET) {
                                 JFileChooser().also { fc ->
                                     if (fc.showDialog(null, "Select") == JFileChooser.APPROVE_OPTION) {
                                         text = fc.selectedFile.absolutePath
-                                        context.currentFile = Maybe.of(fc.selectedFile)
+                                        selectedFile.value = Maybe.of(fc.selectedFile)
                                     }
                                 }
                                 Processed
@@ -56,8 +59,8 @@ class FileSelectorDialog(screen: Screen,
                                 val modal = ConfirmationDialog(screen).apply {
                                     root.onClosed {
                                         when (it) {
-                                            ConfirmationDialog.Yes -> TODO()
-                                            ConfirmationDialog.No -> TODO()
+                                            Yes -> TODO()
+                                            No -> TODO()
                                         }
                                     }
                                 }
@@ -87,4 +90,11 @@ class FileSelectorDialog(screen: Screen,
                         })
             }
 
+
+    companion object {
+
+        private val CONTENT_SIZE = Sizes.create(34, 12)
+        private const val TITLE = "File"
+
+    }
 }
