@@ -21,11 +21,12 @@ class DrawView(context: ApplicationContext) : BaseView() {
                     addFragment(UpperToolBelt(
                             screen = screen,
                             context = context))
-                    addFragment(DrawArea(context.drawingComponent))
-                    addFragment(LowerToolBelt(
+                    val ltb = LowerToolBelt(
                             drawing = context.selectedDrawing,
                             screen = screen,
-                            context = context))
+                            context = context)
+                    addFragment(DrawArea(context.drawingComponent) { ltb.updateMousePosition(it) })
+                    addFragment(ltb)
                 }
     }
 

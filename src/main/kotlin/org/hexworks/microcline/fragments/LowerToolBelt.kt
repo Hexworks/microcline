@@ -5,11 +5,9 @@ import org.hexworks.microcline.commands.SelectTile
 import org.hexworks.microcline.config.Config
 import org.hexworks.microcline.context.ApplicationContext
 import org.hexworks.microcline.data.Drawing
-import org.hexworks.microcline.dialogs.FileSelectorDialog
 import org.hexworks.microcline.dialogs.LayerEditorDialog
 import org.hexworks.microcline.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.dialogs.TileSelectorDialog
-import org.hexworks.microcline.extensions.processMouseEvents
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.component.Fragment
@@ -18,9 +16,6 @@ import org.hexworks.zircon.api.data.Size
 import org.hexworks.zircon.api.extensions.box
 import org.hexworks.zircon.api.extensions.onClosed
 import org.hexworks.zircon.api.screen.Screen
-import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_DRAGGED
-import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_MOVED
-import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
 
 class LowerToolBelt(screen: Screen,
                     private val drawing: Drawing,
@@ -104,17 +99,9 @@ class LowerToolBelt(screen: Screen,
         root.addFragment(modeTool)
         root.addFragment(layerTool)
         root.addComponent(mousePosition)
-
-        screen.processMouseEvents(MOUSE_MOVED, TARGET) {
-            updateMousePosition(it.position)
-        }
-        screen.processMouseEvents(MOUSE_DRAGGED, TARGET) {
-            updateMousePosition(it.position)
-        }
     }
 
-    private fun updateMousePosition(pos: Position) {
-        val p = pos - Positions.offset1x1()
-        mousePosition.text = "X: ${p.x} Y: ${p.y}"
+    fun updateMousePosition(pos: Position) {
+        mousePosition.text = "X: ${pos.x} Y: ${pos.y}"
     }
 }
