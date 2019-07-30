@@ -28,7 +28,7 @@ object Config {
     const val TOOLBELT_HEIGHT = 1
     const val BORDER_SIZE = 1
     const val WINDOW_WIDTH = 2 * BORDER_SIZE + DRAW_AREA_WIDTH
-    const val WINDOW_HEIGHT = 4 * BORDER_SIZE + DRAW_AREA_HEIGHT + TOOLBELT_HEIGHT
+    const val WINDOW_HEIGHT = 6 * BORDER_SIZE + DRAW_AREA_HEIGHT + 2 * TOOLBELT_HEIGHT
 
     const val NONAME_FILE: String = "<noname>"
     val DRAW_AREA_SIZE = Size.create(WINDOW_WIDTH, DRAW_AREA_HEIGHT + 2 * BORDER_SIZE)

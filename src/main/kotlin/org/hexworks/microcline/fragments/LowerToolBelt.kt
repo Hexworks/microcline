@@ -22,9 +22,9 @@ import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_DRAGGED
 import org.hexworks.zircon.api.uievent.MouseEventType.MOUSE_MOVED
 import org.hexworks.zircon.api.uievent.UIEventPhase.TARGET
 
-class ToolBelt(screen: Screen,
-               private val drawing: Drawing,
-               private val context: ApplicationContext) : Fragment {
+class LowerToolBelt(screen: Screen,
+                    private val drawing: Drawing,
+                    private val context: ApplicationContext) : Fragment {
 
     override val root = Components.hbox()
             .withSize(Size.create(
@@ -44,24 +44,15 @@ class ToolBelt(screen: Screen,
             .withText(context.selectedDrawMode.label)
             .build().apply {
                 textProperty.updateFrom(context.selectedDrawModeProperty) {
-                    it.name
+                    it.label
                 }
             }
 
     private val layerText = Components.label()
-            .withSize(Size.create(8, 1))
+            .withSize(Size.create(28, 1))
             .build().apply {
                 textProperty.updateFrom(context.selectedLayerProperty) {
                     it.name
-                }
-            }
-
-    private val fileText = Components.label()
-            .withSize(Size.create(10, 1))
-            .withText(Config.NONAME_FILE)
-            .build().apply {
-                textProperty.updateFrom(context.selectedFileProperty) {
-                    it.map { file -> file.name }.orElse(Config.NONAME_FILE)
                 }
             }
 
@@ -102,11 +93,6 @@ class ToolBelt(screen: Screen,
                         drawLayersArea = context.drawLayersArea))
             })
 
-    private val fileTool = Tool(
-            buttonLabel = "File",
-            visualization = fileText,
-            activationHandler = { screen.openModal(FileSelectorDialog(screen, context.selectedFileProperty)) })
-
     private val mousePosition = Components.label()
             .withSize(Size.create(13, 3))
             .withDecorations(box())
@@ -117,7 +103,6 @@ class ToolBelt(screen: Screen,
         root.addFragment(tileTool)
         root.addFragment(modeTool)
         root.addFragment(layerTool)
-        root.addFragment(fileTool)
         root.addComponent(mousePosition)
 
         screen.processMouseEvents(MOUSE_MOVED, TARGET) {
