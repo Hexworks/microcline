@@ -12,7 +12,7 @@ import org.hexworks.zircon.api.extensions.processComponentEvents
 import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
 
 /**
- * A [Tool] is an element for a [LowerToolBelt] which is responsible
+ * A [Tool] is an element for a toolbar which is responsible
  * for editing separate properties of an [ApplicationContext]
  */
 class Tool(buttonLabel: String,

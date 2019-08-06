@@ -11,7 +11,7 @@ import org.hexworks.zircon.api.extensions.box
 import org.hexworks.zircon.api.screen.Screen
 
 
-class UpperToolBelt(screen: Screen,
+class SystemToolbar(screen: Screen,
                     private val context: ApplicationContext) : Fragment {
 
     override val root = Components.hbox()

@@ -9,7 +9,6 @@ import org.hexworks.microcline.dialogs.LayerEditorDialog
 import org.hexworks.microcline.dialogs.ModeSelectorDialog
 import org.hexworks.microcline.dialogs.TileSelectorDialog
 import org.hexworks.zircon.api.Components
-import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.component.Fragment
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Size
@@ -17,9 +16,10 @@ import org.hexworks.zircon.api.extensions.box
 import org.hexworks.zircon.api.extensions.onClosed
 import org.hexworks.zircon.api.screen.Screen
 
-class LowerToolBelt(screen: Screen,
-                    private val drawing: Drawing,
-                    private val context: ApplicationContext) : Fragment {
+
+class DrawToolbar(screen: Screen,
+                  private val drawing: Drawing,
+                  private val context: ApplicationContext) : Fragment {
 
     override val root = Components.hbox()
             .withSize(Size.create(
