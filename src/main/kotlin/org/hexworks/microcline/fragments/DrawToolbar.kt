@@ -24,7 +24,7 @@ class DrawToolbar(screen: Screen,
     override val root = Components.hbox()
             .withSize(Size.create(
                     width = Config.WINDOW_WIDTH,
-                    height = Config.TOOLBELT_HEIGHT + 2 * Config.BORDER_SIZE))
+                    height = Config.TOOLBAR_HEIGHT + 2 * Config.BORDER_SIZE))
             .build()
 
     private val selectedTileIcon = Components.icon()
